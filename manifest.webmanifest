@@ -1,0 +1,17 @@
+{
+  "name": "আরিফের একাউন্টস",
+  "short_name": "আরিফের হিসাব",
+  "description": "আয়, খরচ, ঋণ, সেলারি আর সঞ্চয়ের ব্যক্তিগত হিসাব খাতা",
+  "lang": "bn",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a110f",
+  "theme_color": "#0b3d33",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3d33">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="আরিফের হিসাব">
+<title>আরিফের একাউন্টস</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230b3d33'/%3E%3Cstop offset='1' stop-color='%2314866f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23e8c872' font-family='Nirmala UI,sans-serif' font-weight='700'%3E৳%3C/text%3E%3C/svg%3E">
+<style>
+/* ======== সম্পূর্ণ অফলাইন: কোনো বাইরের ফন্ট বা ফাইল নেই ======== */
+:root{
+  --bg:#f2f5f3;--surface:#ffffff;--surface2:#f6f8f7;--text:#12201b;--muted:#6b7b75;--line:#e4eae7;
+  --pri:#0f766e;--pri-soft:#e2f3ef;--gold:#b8892f;--gold-soft:#f8f0dc;
+  --inc:#0e9566;--inc-soft:#e1f5ec;--exp:#dc4f3a;--exp-soft:#fcebe7;--blue:#3567d4;--blue-soft:#e8eefc;
+  --shadow:0 1px 2px rgba(16,40,32,.04),0 6px 24px rgba(16,40,32,.06);--r:18px;
+  --hero:linear-gradient(135deg,#0a3a31 0%,#0f6b5d 55%,#168a73 100%);
+}
+html[data-theme="dark"]{
+  --bg:#0a110f;--surface:#111a17;--surface2:#16211d;--text:#e7eeeb;--muted:#8ea29a;--line:#1f2d28;
+  --pri:#2bb39a;--pri-soft:#143029;--gold:#e0b95a;--gold-soft:#2e2715;
+  --inc:#3ad49a;--inc-soft:#12302a;--exp:#ff7f66;--exp-soft:#36201b;--blue:#7ea4f8;--blue-soft:#18233a;
+  --shadow:0 0 0 1px rgba(255,255,255,.02);
+  --hero:linear-gradient(135deg,#072a24 0%,#0c5247 55%,#11705e 100%);
+}
+@media (prefers-color-scheme:dark){html:not([data-theme="light"]){
+  --bg:#0a110f;--surface:#111a17;--surface2:#16211d;--text:#e7eeeb;--muted:#8ea29a;--line:#1f2d28;
+  --pri:#2bb39a;--pri-soft:#143029;--gold:#e0b95a;--gold-soft:#2e2715;
+  --inc:#3ad49a;--inc-soft:#12302a;--exp:#ff7f66;--exp-soft:#36201b;--blue:#7ea4f8;--blue-soft:#18233a;
+  --shadow:0 0 0 1px rgba(255,255,255,.02);
+  --hero:linear-gradient(135deg,#072a24 0%,#0c5247 55%,#11705e 100%);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Nirmala UI','Noto Sans Bengali','Hind Siliguri','Vrinda','Kohinoor Bangla','Bangla Sangam MN',system-ui,sans-serif;font-size:15px;line-height:1.55}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select{font:inherit;color:var(--text);background:var(--surface2);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;width:100%;transition:border-color .15s}
+input:focus,select:focus{outline:none;border-color:var(--pri)}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+
+/* ---------- Sidebar ---------- */
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 8px 22px}
+.logo{width:42px;height:42px;border-radius:13px;background:var(--hero);display:grid;place-items:center;color:#e8c872;font-weight:700;font-size:22px;box-shadow:0 6px 16px rgba(15,107,93,.35)}
+.brand b{font-size:16px;display:block;line-height:1.2;white-space:nowrap}
+.brand small{color:var(--muted);font-size:12px}
+.nv{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;border:0;background:none;color:var(--muted);text-align:left;font-size:15px;width:100%}
+.nv svg{width:20px;height:20px;flex:none}
+.nv:hover{background:var(--surface2);color:var(--text)}
+.nv.on{background:var(--pri-soft);color:var(--pri);font-weight:600}
+.side .addbtn{margin-top:14px}
+.side .foot{margin-top:auto;display:flex;gap:6px;align-items:center}
+.syncst{border:0;background:var(--surface2);border-radius:10px;padding:6px 10px;color:var(--muted);text-align:left;line-height:1.35;flex:1}
+.syncst.ok{color:var(--inc)}.syncst.err{color:var(--exp)}
+#syncChip{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:5px 12px;font-size:12.5px;color:var(--muted)}
+#syncChip.ok{color:var(--inc)}#syncChip.err{color:var(--exp)}
+details.guide{margin-top:14px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+details.guide summary{cursor:pointer;font-weight:600}
+details.guide ol{margin:10px 0 0;padding-left:22px}details.guide li{margin-bottom:8px}
+code.k{background:var(--surface);border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:13px}
+svg.i{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Main ---------- */
+main{padding:26px 30px 120px;max-width:1180px;width:100%;margin:0 auto}
+.ph{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.ph h2{margin:0;font-size:24px;letter-spacing:-.2px}
+.ph .sub{color:var(--muted);font-size:14px}
+.sp{flex:1}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--surface);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card h3{margin:0 0 14px;font-size:16px;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.mt{margin-top:16px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}.blue{color:var(--blue)}.gold{color:var(--gold)}
+.link{background:none;border:0;color:var(--pri);font-weight:600;font-size:13px;padding:0}
+
+/* ---------- Buttons ---------- */
+.btn{border:0;border-radius:12px;padding:11px 18px;background:var(--pri);color:#fff;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.gold{background:linear-gradient(135deg,#d6a945,#b8862a);color:#1d1606}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1.5px solid var(--line)}
+.btn.danger{color:var(--exp)}
+.btn.red{background:var(--exp)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn.big{padding:14px 20px;font-size:16px;flex:1}
+.btn svg{width:18px;height:18px}
+.iconb{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--muted)}
+.iconb svg{width:19px;height:19px}
+
+/* ---------- Hero ---------- */
+.hero{background:var(--hero);color:#fff;border-radius:24px;padding:26px 28px;position:relative;overflow:hidden;box-shadow:0 14px 40px rgba(10,58,49,.28)}
+.hero:before{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(232,200,114,.28),transparent 70%)}
+.hero:after{content:"";position:absolute;left:40%;bottom:-120px;width:300px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%)}
+.hero .hl{opacity:.8;font-size:14px;display:flex;align-items:center;gap:8px}
+.hero .hb{font-size:40px;font-weight:700;letter-spacing:-.5px;margin:4px 0 18px;position:relative;z-index:1}
+.hrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;z-index:1}
+.hrow div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 14px;backdrop-filter:blur(4px)}
+.hrow span{display:block;font-size:12px;opacity:.78}
+.hrow b{font-size:18px}
+.gl{color:#f3d58a}
+
+/* ---------- Quick actions ---------- */
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.qa button{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;box-shadow:var(--shadow);font-size:14px;font-weight:500;transition:transform .12s}
+.qa button:hover{transform:translateY(-2px)}
+.qa .qi{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:21px}
+
+.banner{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:16px;background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);margin-top:16px}
+.banner .em{font-size:26px}
+
+/* ---------- Stats ---------- */
+.stat .l{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
+.stat .v{font-size:25px;font-weight:700;margin-top:2px;letter-spacing:-.3px}
+.chip{display:inline-flex;align-items:center;gap:2px;font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.chip.good{background:var(--inc-soft);color:var(--inc)}
+.chip.bad{background:var(--exp-soft);color:var(--exp)}
+.chip.same{background:var(--surface2);color:var(--muted)}
+.chip.info{background:var(--blue-soft);color:var(--blue)}
+
+/* compare */
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.cb{background:var(--surface2);border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
+.cb .t{font-size:13px;color:var(--muted);margin-bottom:4px}
+.cb .big{font-size:21px;font-weight:700}
+.cb .ln{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-top:6px}
+.verdict{font-size:13px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+
+/* bars */
+.bar{margin-bottom:13px}
+.bar .bt{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:5px}
+.bar .em{width:32px;height:32px;border-radius:10px;background:var(--surface2);display:grid;place-items:center;font-size:16px;flex:none}
+.track{height:8px;background:var(--surface2);border-radius:8px;overflow:hidden}
+.fill{height:100%;border-radius:8px;background:var(--exp);transition:width .5s}
+.fill.i{background:var(--inc)}.fill.b{background:var(--blue)}.fill.g{background:linear-gradient(90deg,#d6a945,#b8862a)}
+
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:10px;height:190px;padding-top:8px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;min-width:0}
+.chart .pair{display:flex;gap:3px;align-items:flex-end;height:100%;width:100%;justify-content:center}
+.chart .pair div{width:40%;max-width:20px;border-radius:6px 6px 2px 2px;min-height:2px;transition:height .5s}
+.chart .xl{font-size:11px;color:var(--muted);margin-top:6px;white-space:nowrap}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted);font-weight:400}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+
+/* insights */
+.ins{display:flex;gap:10px;padding:11px 13px;border-radius:12px;background:var(--blue-soft);margin-bottom:9px;font-size:14px}
+.ins.w{background:var(--exp-soft)}.ins.g{background:var(--inc-soft)}
+.ins .e{font-size:17px;flex:none}
+
+/* tx list */
+.tl .day{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:14px 4px 6px;font-weight:600}
+.tr{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;cursor:pointer;transition:background .12s;width:100%;background:none;border:0;text-align:left}
+.tr:hover{background:var(--surface2)}
+.tr .em{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:19px;flex:none}
+.tr .em.e{background:var(--exp-soft)}.tr .em.i{background:var(--inc-soft)}
+.tr .mid{flex:1;min-width:0}
+.tr .mid b{display:block;font-weight:600;font-size:15px}
+.tr .mid span{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr .amt{font-weight:700;font-size:15px;white-space:nowrap}
+.empty{color:var(--muted);text-align:center;padding:30px 16px;font-size:14px}
+.empty .big{font-size:40px;display:block;margin-bottom:6px}
+
+/* month switcher & pills */
+.msw{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.msw button{border:0;background:none;width:34px;height:34px;border-radius:10px;font-size:18px;color:var(--muted)}
+.msw button:hover{background:var(--surface2)}
+.msw b{min-width:130px;text-align:center;font-size:15px}
+.pills{display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.pills button{border:0;background:none;padding:7px 14px;border-radius:10px;color:var(--muted);font-size:14px}
+.pills button.on{background:var(--pri);color:#fff;font-weight:600}
+.sumstrip{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+.sumstrip div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:13px}
+.sumstrip b{font-size:15px;margin-left:4px}
+
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--line);font-size:14px}
+th{color:var(--muted);font-weight:500;font-size:12.5px}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* items (loan/goal) */
+.item{background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.item .top{display:flex;align-items:center;gap:12px}
+.item h4{margin:0;font-size:16px}
+.item .meta{font-size:13px;color:var(--muted)}
+.item .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}
+.item .nums span{display:block;font-size:12px;color:var(--muted)}
+.item .nums b{font-size:15px}
+.item .acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.hist{font-size:13px;color:var(--muted);margin-top:10px;max-height:110px;overflow:auto}
+.hist div{display:flex;justify-content:space-between;padding:4px 0;border-top:1px dashed var(--line)}
+.avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;flex:none}
+.ringwrap{position:relative;display:grid;place-items:center;flex:none}
+.ringwrap .rc{position:absolute;text-align:center;line-height:1.2}
+
+/* ---------- Sheet (modal) ---------- */
+.ov{position:fixed;inset:0;background:rgba(5,15,12,.5);backdrop-filter:blur(3px);z-index:50;display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .2s}
+.ov.show{display:flex}.ov.vis{opacity:1}
+.sheet{background:var(--surface);border-radius:24px;width:100%;max-width:540px;max-height:92vh;overflow:auto;padding:22px 22px 20px;box-shadow:0 30px 80px rgba(0,0,0,.3);transform:translateY(16px) scale(.98);transition:transform .22s}
+.ov.vis .sheet{transform:none}
+.sh-h{display:flex;align-items:center;margin-bottom:14px}
+.sh-h h3{margin:0;font-size:19px;flex:1}
+.x{width:36px;height:36px;border-radius:11px;border:0;background:var(--surface2);color:var(--muted);font-size:16px}
+.sh-f{display:flex;gap:10px;margin-top:18px}
+.lbl2{font-size:13px;color:var(--muted);margin:14px 0 7px;font-weight:500}
+label.lb{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.fg{display:grid;gap:12px}
+.fg2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.seg2{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border-radius:14px;padding:4px;gap:4px}
+.seg2 button{border:0;background:none;padding:10px;border-radius:11px;font-weight:600;color:var(--muted);font-size:15px}
+.seg2 button.on[data-v="expense"],.seg2 button.on[data-v="taken"]{background:var(--exp);color:#fff}
+.seg2 button.on[data-v="income"],.seg2 button.on[data-v="given"]{background:var(--inc);color:#fff}
+.amtbox{display:flex;align-items:center;justify-content:center;gap:4px;margin:18px 0 4px;padding:6px 0 10px;border-bottom:2px solid var(--line)}
+.amtbox:focus-within{border-color:var(--pri)}
+.amtbox span{font-size:30px;color:var(--muted);font-weight:600}
+.amtbox input{border:0;background:none;font-size:40px;font-weight:700;text-align:center;width:100%;max-width:300px;padding:0}
+.qamt{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.qamt button{border:1px solid var(--line);background:var(--surface2);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--muted)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.cbtn{border:1.5px solid var(--line);background:var(--surface2);border-radius:14px;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;line-height:1.25;text-align:center;transition:all .12s}
+.cbtn .e{font-size:22px}
+.cbtn.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri);font-weight:600;box-shadow:0 0 0 3px color-mix(in srgb,var(--pri) 15%,transparent)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips button{border:1.5px solid var(--line);background:var(--surface2);border-radius:12px;padding:8px 16px;font-size:14px}
+.chips button.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri);font-weight:600}
+.chips input{width:auto;padding:7px 10px}
+.check{display:flex;gap:9px;align-items:center;font-size:14px;margin-top:12px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--pri)}
+.shake{animation:sh .35s}
+@keyframes sh{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);background:#12201b;color:#fff;padding:12px 20px;border-radius:14px;opacity:0;transition:.25s;pointer-events:none;z-index:80;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:8px;align-items:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* desktop FAB */
+.fab{position:fixed;right:30px;bottom:30px;width:62px;height:62px;border-radius:20px;border:0;background:var(--hero);color:#fff;box-shadow:0 12px 30px rgba(10,58,49,.4);display:grid;place-items:center;z-index:30;transition:transform .15s}
+.fab:hover{transform:scale(1.06)}
+.fab svg{width:28px;height:28px}
+
+/* ---------- Bottom nav (mobile) ---------- */
+.bnav{display:none}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more button{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;box-shadow:var(--shadow)}
+.more .e{font-size:26px}
+.more small{color:var(--muted);font-size:12.5px}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side,.fab{display:none}
+  main{padding:18px 16px 110px}
+  .hero{padding:22px 20px;border-radius:22px}
+  .hero .hb{font-size:34px}
+  .hrow b{font-size:15px}.hrow div{padding:8px 10px}
+  .qa{gap:8px}.qa button{padding:12px 4px;font-size:12.5px}.qa .qi{width:40px;height:40px}
+  .g2{grid-template-columns:1fr}
+  .ph h2{font-size:21px}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:40;justify-content:space-around;align-items:center}
+  .bnav button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:4px 10px;min-width:58px}
+  .bnav button svg{width:22px;height:22px}
+  .bnav button.on{color:var(--pri);font-weight:600}
+  .bnav .plus{width:56px;height:56px;border-radius:18px;background:var(--hero);color:#fff;margin-top:-26px;box-shadow:0 8px 22px rgba(10,58,49,.4);justify-content:center;min-width:0;padding:0}
+  .bnav .plus svg{width:26px;height:26px}
+  .ov{align-items:flex-end;padding:0}
+  .sheet{border-radius:24px 24px 0 0;max-height:94vh;padding-bottom:calc(20px + env(safe-area-inset-bottom));transform:translateY(40px)}
+  .fg2{grid-template-columns:1fr}
+  .toast{bottom:96px}
+}
+@media (max-width:420px){.hrow{grid-template-columns:1fr 1fr}.hrow div:last-child{grid-column:span 2}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">৳</div><div><b>আরিফের একাউন্টস</b><small>ব্যক্তিগত হিসাব খাতা</small></div></div>
+    <div id="sideNav"></div>
+    <button class="btn addbtn" data-act="addtx"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>নতুন লেনদেন</button>
+    <div class="foot"><button class="iconb" data-act="theme" title="থিম পরিবর্তন"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button><button class="syncst small" id="syncSide" data-go="set" title="শীট সংযোগ"></button></div>
+  </aside>
+  <main id="view"></main>
+</div>
+<button class="fab" data-act="addtx" title="নতুন লেনদেন (N)"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+<nav class="bnav" id="bnav"></nav>
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   আরিফের একাউন্টস — সম্পূর্ণ অফলাইন, তথ্য localStorage-এ
+   ========================================================= */
+const APP_URL='https://arifulislamofficebox-wq.github.io/arif-accounts/';
+const rndKey=()=>Array.from(crypto.getRandomValues(new Uint8Array(12)),b=>b.toString(16).padStart(2,'0')).join('');
+const KEY='arif_accounts_v1', OLDKEY='amar_hisab_v1';
+const DEF_EXP=['খাবার','বাজার','বাসা ভাড়া','যাতায়াত','বিদ্যুৎ/গ্যাস/পানি','মোবাইল/ইন্টারনেট','শিক্ষা','চিকিৎসা','কেনাকাটা','বিনোদন','পরিবার','ঋণ পরিশোধ','অন্যান্য'];
+const DEF_INC=['সেলারি','ব্যবসা','ফ্রিল্যান্স','বোনাস','ভাড়া আয়','উপহার','ঋণ গ্রহণ','ঋণ ফেরত','অন্যান্য'];
+const ICON={'খাবার':'🍛','বাজার':'🛒','বাসা ভাড়া':'🏠','যাতায়াত':'🚌','বিদ্যুৎ/গ্যাস/পানি':'💡','মোবাইল/ইন্টারনেট':'📱','শিক্ষা':'📚','চিকিৎসা':'💊','কেনাকাটা':'🛍️','বিনোদন':'🎬','পরিবার':'👪','ঋণ পরিশোধ':'💳','অন্যান্য':'📦','সেলারি':'💼','ব্যবসা':'🏪','ফ্রিল্যান্স':'💻','বোনাস':'🎁','ভাড়া আয়':'🏘️','উপহার':'🎀','ঋণ গ্রহণ':'🤝','ঋণ ফেরত':'↩️'};
+const ic=c=>ICON[c]||'🏷️';
+const PAL=['#0f766e','#dc4f3a','#c9a24a','#3567d4','#8b5cf6','#14b8a6','#ea8a2e','#94a39d'];
+
+let S=load();
+function load(){
+  for(const k of [KEY,OLDKEY]){try{const d=JSON.parse(localStorage.getItem(k));if(d&&d.tx)return fix(d,k===OLDKEY);}catch(e){}}
+  return fix({});
+}
+function fix(d,migrated){
+  const s=Object.assign({tx:[],loans:[],goals:[],del:{},setU:0,cats:{expense:[...DEF_EXP],income:[...DEF_INC]}},d);
+  s.settings=Object.assign({salary:0,salaryDay:1,salarySrc:'',budget:0,theme:'auto',onboarded:!!migrated,lastBackup:'',syncUrl:'',syncKey:rndKey(),lastSync:'',syncDirty:false,syncErr:''},d.settings||{});
+  if(migrated)s.settings.onboarded=true;
+  return s;
+}
+const touch=o=>{o.u=Math.max(Date.now(),(o.u||0)+1);return o;};
+const kill=(id,u=0)=>{S.del[id]=Math.max(Date.now(),(u||0)+1,(S.del[id]||0));};
+const setTouch=()=>{S.setU=Math.max(Date.now(),(S.setU||0)+1);};
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert('সংরক্ষণ করা যায়নি: '+e.message);}}
+let saveVer=0;
+function save(){const now=Date.now();for(const c of [S.tx,S.loans,S.goals])for(const x of c)if(!x.u)x.u=now;saveVer++;S.settings.syncDirty=true;persist();render();scheduleSync();}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const bn=n=>Number(n).toLocaleString('bn-BD');
+const bnY=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
+const tk=n=>(n<0?'-':'')+'৳'+Math.abs(Math.round(n)).toLocaleString('bn-BD');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>ds(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00');d.setDate(d.getDate()+n);return ds(d);};
+const ym=s=>s.slice(0,7);
+const MONTHS=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const MS=['জানু','ফেব্রু','মার্চ','এপ্রি','মে','জুন','জুলা','আগ','সেপ্টে','অক্টো','নভে','ডিসে'];
+const monthName=m=>MONTHS[+m.slice(5)-1]+' '+bnY(m.slice(0,4));
+const fmtDate=s=>{const [y,m,d]=s.split('-');return bnY(+d)+' '+MS[+m-1]+' '+bnY(y);};
+const dayLabel=s=>{const t=today();if(s===t)return 'আজ';if(s===addDays(t,-1))return 'গতকাল';return new Date(s+'T00:00').toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long'});};
+const shiftMonth=(m,n)=>{let [y,mm]=m.split('-').map(Number);mm+=n;while(mm<1){mm+=12;y--;}while(mm>12){mm-=12;y++;}return y+'-'+pad(mm);};
+const prevMonth=m=>shiftMonth(m,-1);
+const daysIn=m=>{const [y,mm]=m.split('-').map(Number);return new Date(y,mm,0).getDate();};
+const sum=(type,from,to,cat)=>{let t=0;for(const x of S.tx)if(x.type===type&&x.date>=from&&x.date<=to&&(!cat||x.cat===cat))t+=x.amount;return t;};
+const byCat=(type,from,to)=>{const m={};for(const x of S.tx)if(x.type===type&&x.date>=from&&x.date<=to)m[x.cat]=(m[x.cat]||0)+x.amount;return Object.entries(m).sort((a,b)=>b[1]-a[1]);};
+const balance=()=>S.tx.reduce((b,x)=>b+(x.type==='income'?x.amount:-x.amount),0);
+const sortTx=l=>l.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+const pctv=(c,p)=>p?(c-p)/p*100:(c?null:0);
+function chip(cur,prev,lowerIsGood=true){
+  const p=pctv(cur,prev);
+  if(p===null)return '<span class="chip info">নতুন</span>';
+  if(Math.abs(p)<0.5)return '<span class="chip same">একই</span>';
+  const up=p>0,good=lowerIsGood?!up:up;
+  return `<span class="chip ${good?'good':'bad'}">${up?'↑':'↓'} ${bn(Math.abs(p).toFixed(0))}%</span>`;
+}
+const loanPaid=l=>l.payments.reduce((a,p)=>a+p.amount,0);
+const loanLeft=l=>Math.max(0,l.amount-loanPaid(l));
+const goalSaved=g=>g.deposits.reduce((a,d)=>a+d.amount,0);
+const monthsBetween=(a,b)=>{const [y1,m1]=a.split('-').map(Number),[y2,m2]=b.split('-').map(Number);return (y2-y1)*12+(m2-m1);};
+function toast(m,e='✅'){const t=$('toast');t.innerHTML=`<span>${e}</span>${m}`;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2000);}
+function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+
+/* ---------- icons ---------- */
+const SV={
+ home:'<path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6H9v6H5a2 2 0 0 1-2-2z"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+ chart:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/>',
+ loan:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/>',
+ save:'<path d="M19 9c1.5 0 2 1 2 2v2c0 1-.5 2-2 2h-.5c-.6 1.6-1.8 2.9-3.5 3.6V21h-3v-1.5h-2V21H7v-2.4A7 7 0 0 1 5 9.5V9l-2-1 1-2 2.5 1.2A7 7 0 0 1 11 5h3a7 7 0 0 1 4.6 1.7"/><circle cx="15.5" cy="10.5" r=".8"/>',
+ salary:'<rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+ more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const svg=n=>`<svg class="i" viewBox="0 0 24 24">${SV[n]}</svg>`;
+const PAGES=[['home','হোম','home'],['tx','লেনদেন','list'],['report','রিপোর্ট','chart'],['loan','ঋণ','loan'],['save','সঞ্চয় প্ল্যান','save'],['salary','সেলারি','salary'],['set','সেটিংস','gear']];
+
+/* ---------- theme ---------- */
+function applyTheme(){const t=S.settings.theme;if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);}
+function isDark(){return S.settings.theme==='dark'||(S.settings.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);}
+
+/* ---------- sheet ---------- */
+let sheetClose=null;
+function openSheet(html,mount){
+  const ov=$('ov');$('sheet').innerHTML=html;ov.classList.add('show');requestAnimationFrame(()=>ov.classList.add('vis'));
+  if(mount)mount($('sheet'));
+  setTimeout(()=>{const f=$('sheet').querySelector('[autofocus]');if(f)f.focus();},60);
+}
+function closeSheet(){const ov=$('ov');ov.classList.remove('vis');setTimeout(()=>ov.classList.remove('show'),200);}
+$('ov').addEventListener('mousedown',e=>{if(e.target.id==='ov')closeSheet();});
+function askConfirm(msg,okText,cb){
+  openSheet(`<div class="sh-h"><h3>নিশ্চিত করুন</h3><button class="x" data-act="close">✕</button></div><p style="margin:0 0 4px">${msg}</p>
+  <div class="sh-f"><button class="btn ghost big" data-act="close">না, থাক</button><button class="btn red big" id="cfOk">${okText}</button></div>`,s=>{s.querySelector('#cfOk').onclick=()=>{closeSheet();cb();};});
+}
+
+/* ---------- navigation ---------- */
+let page='home',txM=ym(today()),txType='',txQ='',repM=ym(today()),repY=today().slice(0,4);
+function go(p){page=p;render();window.scrollTo(0,0);}
+function renderNav(){
+  $('sideNav').innerHTML=PAGES.map(([k,l,i])=>`<button class="nv ${page===k?'on':''}" data-go="${k}">${svg(i)}${l}</button>`).join('');
+  const inMore=['report','loan','salary','set','more'].includes(page);
+  $('bnav').innerHTML=`
+   <button data-go="home" class="${page==='home'?'on':''}">${svg('home')}হোম</button>
+   <button data-go="tx" class="${page==='tx'?'on':''}">${svg('list')}লেনদেন</button>
+   <button class="plus" data-act="addtx" aria-label="নতুন লেনদেন">${svg('plus')}</button>
+   <button data-go="save" class="${page==='save'?'on':''}">${svg('save')}সঞ্চয়</button>
+   <button data-go="more" class="${inMore?'on':''}">${svg('more')}আরও</button>`;
+}
+function render(){applyTheme();renderNav();$('view').innerHTML=(V[page]||V.home)();after[page]&&after[page]();}
+const after={};
+
+/* ---------- reusable pieces ---------- */
+function txRow(x){
+  return `<button class="tr" data-act="edittx" data-id="${x.id}"><div class="em ${x.type==='income'?'i':'e'}">${ic(x.cat)}</div>
+  <div class="mid"><b>${esc(x.cat)}</b><span>${x.note?esc(x.note):dayLabel(x.date)}</span></div>
+  <div class="amt ${x.type==='income'?'inc':'exp'}">${x.type==='income'?'+':'−'}${tk(x.amount)}</div></button>`;
+}
+function bars(list,cls=''){
+  if(!list.length)return '<div class="empty"><span class="big">📭</span>এখনও কোনো তথ্য নেই</div>';
+  const tot=list.reduce((a,b)=>a+b[1],0),max=list[0][1];
+  return list.map(([k,v])=>`<div class="bar"><div class="bt"><div class="em">${ic(k)}</div><span style="flex:1">${esc(k)}</span><b>${tk(v)}</b><span class="muted small" style="width:38px;text-align:right">${bn((v/tot*100).toFixed(0))}%</span></div><div class="track" style="margin-left:42px"><div class="fill ${cls}" style="width:${v/max*100}%"></div></div></div>`).join('');
+}
+function ring(p,color,size=120,stroke=12,center=''){
+  const r=(size-stroke)/2,c=2*Math.PI*r,len=Math.min(1,Math.max(0,p))*c;
+  return `<div class="ringwrap" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface2)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${len} ${c}"/></svg><div class="rc">${center}</div></div>`;
+}
+function donut(list,size=190){
+  const tot=list.reduce((a,b)=>a+b[1],0);if(!tot)return '';
+  let items=list.slice(0,7);if(list.length>7)items.push(['অন্যান্য খাত',list.slice(7).reduce((a,b)=>a+b[1],0)]);
+  const st=26,r=(size-st)/2,c=2*Math.PI*r;let off=0;
+  const segs=items.map(([k,v],i)=>{const len=v/tot*c;const s=`<circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${PAL[i%8]}" stroke-width="${st}" stroke-dasharray="${Math.max(0,len-2)} ${c}" stroke-dashoffset="${-off}"><title>${esc(k)}: ${tk(v)}</title></circle>`;off+=len;return s;}).join('');
+  return `<div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center">
+   <div class="ringwrap" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)">${segs}</svg><div class="rc"><div class="small muted">মোট খরচ</div><b style="font-size:19px">${tk(tot)}</b></div></div>
+   <div style="flex:1;min-width:180px">${items.map(([k,v],i)=>`<div style="display:flex;align-items:center;gap:8px;font-size:14px;padding:4px 0"><i style="width:10px;height:10px;border-radius:3px;background:${PAL[i%8]};flex:none"></i><span style="flex:1">${ic(k)} ${esc(k)}</span><b>${tk(v)}</b><span class="muted small" style="width:36px;text-align:right">${bn((v/tot*100).toFixed(0))}%</span></div>`).join('')}</div></div>`;
+}
+function chart(data){
+  const max=Math.max(1,...data.flatMap(d=>[d[1],d[2]]));
+  return `<div class="chart">${data.map(([l,i,e])=>`<div class="col"><div class="pair"><div style="height:${i/max*100}%;background:var(--inc)" title="আয় ${tk(i)}"></div><div style="height:${e/max*100}%;background:var(--exp)" title="ব্যয় ${tk(e)}"></div></div><div class="xl">${l}</div></div>`).join('')}</div>`;
+}
+const legend=`<div class="legend"><span><i style="background:var(--inc)"></i>আয়</span><span><i style="background:var(--exp)"></i>ব্যয়</span></div>`;
+function greet(){const h=new Date().getHours();return h<5?'শুভ রাত্রি':h<12?'শুভ সকাল':h<16?'শুভ দুপুর':h<19?'শুভ সন্ধ্যা':'শুভ রাত্রি';}
+const salaryPending=()=>{const s=S.settings,t=today();return s.salary&&+t.slice(8)>=Math.min(s.salaryDay,daysIn(ym(t)))&&!S.tx.some(x=>x.type==='income'&&x.cat==='সেলারি'&&ym(x.date)===ym(t));};
+
+function comparisons(){
+  const t=today(),m=ym(t),y=t.slice(0,4);
+  const wd=new Date(t+'T00:00').getDay(),wS=addDays(t,-((wd+1)%7));
+  const pm=prevMonth(m),pmEnd=pm+'-'+pad(Math.min(+t.slice(8),daysIn(pm)));
+  const py=String(+y-1);
+  return [['আজ','গতকাল',t,t,addDays(t,-1),addDays(t,-1)],
+   ['এই সপ্তাহ','গত সপ্তাহ',wS,t,addDays(wS,-7),addDays(t,-7)],
+   ['এই মাস','গত মাস',m+'-01',t,pm+'-01',pmEnd],
+   ['এই বছর','গত বছর',y+'-01-01',t,py+'-01-01',py+t.slice(4)]].map(([a,b,f1,t1,f2,t2])=>{
+    const c=sum('expense',f1,t1),p=sum('expense',f2,t2),d=c-p;
+    return `<div class="cb"><div class="t">${a}র খরচ বনাম ${b}</div><div class="big exp">${tk(c)}</div>
+    <div class="ln"><span class="muted">${b}: ${tk(p)}</span>${chip(c,p)}</div>
+    <div class="verdict">${!p&&!c?'<span class="muted">কোনো খরচ নেই</span>':d>0?`<span class="exp">⚠ ${tk(d)} বেশি খরচ</span>`:d<0?`<span class="inc">✓ ${tk(-d)} কম খরচ</span>`:'<span class="muted">সমান খরচ</span>'}</div></div>`;}).join('');
+}
+function insights(){
+  const t=today(),m=ym(t),f=m+'-01',me=sum('expense',f,t),mi=sum('income',f,t),pm=prevMonth(m),pmEnd=pm+'-'+pad(Math.min(+t.slice(8),daysIn(pm)));
+  const out=[],cats=byCat('expense',f,t),B=S.settings.budget;
+  if(cats.length)out.push(['','🔍',`এ মাসে সবচেয়ে বেশি খরচ <b>${esc(cats[0][0])}</b> খাতে: ${tk(cats[0][1])}, যা মোট খরচের ${bn((cats[0][1]/me*100).toFixed(0))}%।`]);
+  for(const [c,v] of cats){const p=sum('expense',pm+'-01',pmEnd,c);if(p>0&&v>p*1.3&&v-p>300)out.push(['w','📈',`<b>${esc(c)}</b> খাতে গত মাসের এই সময়ের চেয়ে ${tk(v-p)} বেশি খরচ হয়েছে।`]);}
+  if(B){const dim=daysIn(m),day=+t.slice(8),proj=me/day*dim;
+    if(me>B)out.push(['w','🚨',`মাসিক বাজেট ${tk(B)} ছাড়িয়ে ${tk(me-B)} বেশি খরচ হয়ে গেছে।`]);
+    else if(proj>B*1.02)out.push(['w','⏳',`এভাবে খরচ চললে মাস শেষে ${tk(proj)} খরচ হবে। বাজেটে থাকতে প্রতিদিন ${tk((B-me)/Math.max(1,dim-day+1))} এর মধ্যে খরচ রাখুন।`]);
+    else out.push(['g','👍',`বাজেটের মধ্যেই আছেন। মাসের বাকি ${bn(dim-day)} দিনে আরও ${tk(B-me)} খরচ করা যাবে।`]);}
+  if(mi&&me>mi)out.push(['w','⚠️',`এ মাসে আয়ের চেয়ে খরচ ${tk(me-mi)} বেশি হয়েছে।`]);
+  else if(mi&&(mi-me)/mi>=.2)out.push(['g','🌟',`দারুণ! এ মাসে আয়ের ${bn(((mi-me)/mi*100).toFixed(0))}% বাঁচাতে পেরেছেন।`]);
+  for(const l of S.loans.filter(l=>l.due&&loanLeft(l)>0&&l.due<=addDays(t,7)))out.push(['w','📅',`${l.kind==='taken'?'পরিশোধ করতে হবে':'টাকা ফেরত পাওয়ার কথা'}: <b>${esc(l.person)}</b>, ${tk(loanLeft(l))}। শেষ তারিখ ${fmtDate(l.due)}${l.due<t?' (তারিখ পার হয়ে গেছে)':''}।`]);
+  const lb=S.settings.lastBackup;if(S.tx.length>15&&(!lb||lb<addDays(t,-14)))out.push(['','💾',`অনেক দিন ব্যাকআপ নেওয়া হয়নি। <button class="link" data-act="export">এখনই ব্যাকআপ নিন</button>`]);
+  return out.length?out.map(([c,e,h])=>`<div class="ins ${c}"><span class="e">${e}</span><div>${h}</div></div>`).join(''):'<div class="empty"><span class="big">💡</span>লেনদেন যোগ করলে এখানে পরামর্শ দেখাবে</div>';
+}
+
+/* =================== PAGES =================== */
+const V={};
+V.home=()=>{
+  const t=today(),m=ym(t),f=m+'-01',mi=sum('income',f,t),me=sum('expense',f,t),bal=balance();
+  const rate=mi?Math.max(0,(mi-me)/mi*100):0,B=S.settings.budget;
+  const ti=sum('income',t,t),te=sum('expense',t,t);
+  const debt=S.loans.filter(l=>l.kind==='taken').reduce((a,l)=>a+loanLeft(l),0),recv=S.loans.filter(l=>l.kind==='given').reduce((a,l)=>a+loanLeft(l),0);
+  const saved=S.goals.reduce((a,g)=>a+goalSaved(g),0),target=S.goals.reduce((a,g)=>a+g.target,0);
+  const months=[];let mm=m;for(let i=0;i<6;i++){months.unshift(mm);mm=prevMonth(mm);}
+  const recent=sortTx(S.tx).slice(0,6);
+  const fd=new Date().toLocaleDateString('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  return `
+  <div class="ph"><div><div class="sub">${greet()}, আরিফ 👋</div><h2>${fd}</h2></div><span class="sp"></span>
+   <button id="syncChip" data-go="set"></button>
+   <button class="iconb" data-act="theme" title="থিম পরিবর্তন"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+  <div class="hero">
+    <div class="hl">মোট ব্যালেন্স <span class="gl">●</span></div>
+    <div class="hb">${tk(bal)}</div>
+    <div class="hrow"><div><span>${MONTHS[+m.slice(5)-1]} মাসে আয়</span><b>${tk(mi)}</b></div><div><span>${MONTHS[+m.slice(5)-1]} মাসে খরচ</span><b>${tk(me)}</b></div><div><span>সঞ্চয়ের হার</span><b class="gl">${bn(rate.toFixed(0))}%</b></div></div>
+  </div>
+  <div class="qa">
+    <button data-act="addtx" data-type="expense"><div class="qi" style="background:var(--exp-soft)">💸</div>খরচ লিখুন</button>
+    <button data-act="addtx" data-type="income"><div class="qi" style="background:var(--inc-soft)">💰</div>আয় লিখুন</button>
+    <button data-go="save"><div class="qi" style="background:var(--gold-soft)">🐷</div>সঞ্চয়</button>
+    <button data-go="loan"><div class="qi" style="background:var(--blue-soft)">🤝</div>ঋণ</button>
+  </div>
+  ${installBanner()}
+  ${salaryPending()?`<div class="banner"><span class="em">💼</span><div style="flex:1"><b>এ মাসের সেলারি এখনও লেখা হয়নি</b><div class="small muted">${tk(S.settings.salary)}, ${esc(S.settings.salarySrc||'মাসিক সেলারি')}</div></div><button class="btn gold sm" data-act="salrecv">✓ পেয়েছি</button></div>`:''}
+  ${!S.tx.length?`<div class="card mt" style="text-align:center;padding:34px 20px"><div style="font-size:46px">📒</div><h3 style="justify-content:center;font-size:19px;margin:8px 0 6px">আপনার হিসাব খাতা প্রস্তুত</h3><p class="muted" style="margin:0 0 16px">প্রথম আয় বা খরচটি লিখে শুরু করুন। মাত্র ৩টি ধাপ: পরিমাণ লিখুন, খাত বাছুন, সংরক্ষণ করুন।</p><button class="btn" data-act="addtx">${svg('plus')}প্রথম লেনদেন লিখুন</button></div>`:''}
+  <div class="grid g3 mt">
+    <div class="card" style="display:flex;gap:18px;align-items:center">
+      ${B?ring(me/B,me>B?'var(--exp)':me/B>.8?'var(--gold)':'var(--pri)',112,12,`<b style="font-size:20px">${bn(Math.round(me/B*100))}%</b><div class="small muted">খরচ হয়েছে</div>`):ring(0,'var(--pri)',112,12,'<span style="font-size:26px">🎯</span>')}
+      <div><div class="small muted">মাসিক বাজেট</div>${B?`<div style="font-size:22px;font-weight:700">${tk(B)}</div><div class="small ${me>B?'exp':'inc'}">${me>B?tk(me-B)+' বেশি':tk(B-me)+' বাকি আছে'}</div>`:`<div class="small" style="margin:4px 0 8px">বাজেট ঠিক করলে খরচ নিয়ন্ত্রণে রাখা সহজ হয়</div><button class="btn sm" data-go="set">বাজেট ঠিক করুন</button>`}</div>
+    </div>
+    <div class="card stat"><div class="l">☀️ আজকের হিসাব</div><div style="display:flex;gap:20px;margin-top:8px"><div><div class="small muted">আয়</div><div class="v inc" style="font-size:22px">${tk(ti)}</div></div><div><div class="small muted">খরচ</div><div class="v exp" style="font-size:22px">${tk(te)}</div></div></div><div class="small muted" style="margin-top:6px">গতকাল খরচ: ${tk(sum('expense',addDays(t,-1),addDays(t,-1)))}</div></div>
+    <div class="card stat"><div class="l">📌 ঋণ ও সঞ্চয়</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px"><div><div class="small muted">বাকি দেনা</div><b class="exp" style="font-size:18px">${tk(debt)}</b></div><div><div class="small muted">বাকি পাওনা</div><b class="blue" style="font-size:18px">${tk(recv)}</b></div></div>
+      <div class="small muted" style="margin-top:10px">সঞ্চয়: ${tk(saved)}${target?` / ${tk(target)}`:''}</div><div class="track" style="margin-top:4px"><div class="fill g" style="width:${target?Math.min(100,saved/target*100):0}%"></div></div></div>
+  </div>
+  <div class="card mt"><h3>📊 খরচ কি কমছে, নাকি বাড়ছে?</h3><div class="cmp">${comparisons()}</div><div class="small muted" style="margin-top:10px">প্রতিটি তুলনা আগের সময়ের একই কয়টি দিনের সাথে করা হয়েছে, তাই হিসাবটা ন্যায্য। সপ্তাহ ধরা হয়েছে শনিবার থেকে।</div></div>
+  <div class="grid g2 mt">
+    <div class="card"><h3>🔥 এ মাসে কোথায় বেশি খরচ<span class="sp"></span><button class="link" data-go="report">বিস্তারিত →</button></h3>${bars(byCat('expense',f,t).slice(0,6))}</div>
+    <div class="card"><h3>💡 পরামর্শ ও সতর্কতা</h3>${insights()}</div>
+  </div>
+  <div class="card mt"><h3>গত ৬ মাস<span class="sp"></span>${legend}</h3>${chart(months.map(x=>[MS[+x.slice(5)-1],sum('income',x+'-01',x+'-31'),sum('expense',x+'-01',x+'-31')]))}</div>
+  <div class="card mt"><h3>সাম্প্রতিক লেনদেন<span class="sp"></span><button class="link" data-go="tx">সব দেখুন →</button></h3>${recent.length?recent.map(txRow).join(''):'<div class="empty">কোনো লেনদেন নেই</div>'}</div>`;
+};
+
+V.tx=()=>`
+  <div class="ph"><h2>লেনদেন</h2><span class="sp"></span><button class="btn" data-act="addtx">${svg('plus')}নতুন লেনদেন</button></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div class="msw"><button data-act="txm" data-d="-1">‹</button><b>${txM?monthName(txM):'সব সময়'}</b><button data-act="txm" data-d="1">›</button></div>
+    <div class="pills">${[['','সব'],['expense','খরচ'],['income','আয়']].map(([v,l])=>`<button class="${txType===v?'on':''}" data-act="txt" data-v="${v}">${l}</button>`).join('')}</div>
+    <input id="txq" placeholder="🔍 খাত বা নোট দিয়ে খুঁজুন" value="${esc(txQ)}" style="max-width:280px;flex:1;min-width:180px">
+    <button class="link" data-act="txall">${txM?'সব মাস দেখুন':'এই মাস দেখুন'}</button>
+  </div>
+  <div class="sumstrip" id="txsum"></div>
+  <div class="card mt tl" id="txl"></div>`;
+after.tx=()=>{renderTxList();$('txq').oninput=e=>{txQ=e.target.value;renderTxList();};};
+function renderTxList(){
+  const q=txQ.trim().toLowerCase();
+  const list=sortTx(S.tx.filter(x=>(!txM||ym(x.date)===txM)&&(!txType||x.type===txType)&&(!q||x.cat.toLowerCase().includes(q)||(x.note||'').toLowerCase().includes(q))));
+  const i=list.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0),e=list.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0);
+  $('txsum').innerHTML=`<div>${bn(list.length)}টি লেনদেন</div><div>আয়<b class="inc">${tk(i)}</b></div><div>খরচ<b class="exp">${tk(e)}</b></div><div>নিট<b>${tk(i-e)}</b></div>`;
+  if(!list.length){$('txl').innerHTML='<div class="empty"><span class="big">🗂️</span>এখানে কোনো লেনদেন নেই</div>';return;}
+  const g={};for(const x of list)(g[x.date]=g[x.date]||[]).push(x);
+  $('txl').innerHTML=Object.keys(g).map(d=>{const de=g[d].filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0),di=g[d].filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0);
+    return `<div class="day"><span>${dayLabel(d)} · ${fmtDate(d)}</span><span>${di?`<span class="inc">+${tk(di)}</span> `:''}${de?`<span class="exp">−${tk(de)}</span>`:''}</span></div>${g[d].map(txRow).join('')}`;}).join('')+`<div class="small muted" style="text-align:center;padding-top:10px">কোনো লেনদেন বদলাতে বা মুছতে সেটির উপর ক্লিক করুন</div>`;
+}
+
+V.report=()=>{
+  const m=repM,f=m+'-01',to=m+'-31',pm=prevMonth(m);
+  const i=sum('income',f,to),e=sum('expense',f,to),pi=sum('income',pm+'-01',pm+'-31'),pe=sum('expense',pm+'-01',pm+'-31');
+  const days=m===ym(today())?+today().slice(8):daysIn(m);
+  const cur=Object.fromEntries(byCat('expense',f,to)),prev=Object.fromEntries(byCat('expense',pm+'-01',pm+'-31'));
+  const keys=[...new Set([...Object.keys(cur),...Object.keys(prev)])].sort((a,b)=>(cur[b]||0)-(cur[a]||0));
+  const ys=[...new Set([today().slice(0,4),...S.tx.map(x=>x.date.slice(0,4))])].sort().reverse();
+  const rows=MONTHS.map((n,k)=>{const mm=repY+'-'+pad(k+1);return [MS[k],sum('income',mm+'-01',mm+'-31'),sum('expense',mm+'-01',mm+'-31'),n];});
+  const ti=rows.reduce((a,r)=>a+r[1],0),te=rows.reduce((a,r)=>a+r[2],0),py=repY-1,pti=sum('income',py+'-01-01',py+'-12-31'),pte=sum('expense',py+'-01-01',py+'-12-31');
+  return `
+  <div class="ph"><h2>রিপোর্ট</h2><span class="sp"></span><div class="msw"><button data-act="rm" data-d="-1">‹</button><b>${monthName(m)}</b><button data-act="rm" data-d="1">›</button></div></div>
+  <div class="grid g4">
+    <div class="card stat"><div class="l">💰 মোট আয়</div><div class="v inc">${tk(i)}</div><div class="small">${chip(i,pi,false)} <span class="muted">গত মাসে ${tk(pi)}</span></div></div>
+    <div class="card stat"><div class="l">💸 মোট খরচ</div><div class="v exp">${tk(e)}</div><div class="small">${chip(e,pe)} <span class="muted">গত মাসে ${tk(pe)}</span></div></div>
+    <div class="card stat"><div class="l">${i-e>=0?'🟢 উদ্বৃত্ত':'🔴 ঘাটতি'}</div><div class="v ${i-e>=0?'inc':'exp'}">${tk(i-e)}</div><div class="small muted">${i?'সঞ্চয়ের হার '+bn(Math.max(0,(i-e)/i*100).toFixed(0))+'%':''}</div></div>
+    <div class="card stat"><div class="l">📆 দৈনিক গড় খরচ</div><div class="v">${tk(e/days)}</div><div class="small muted">${bn(days)} দিনের হিসাবে</div></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card"><h3>কোথায় কত খরচ হলো</h3>${donut(byCat('expense',f,to))||'<div class="empty"><span class="big">📭</span>এ মাসে কোনো খরচ নেই</div>'}</div>
+    <div class="card"><h3>কোথা থেকে কত টাকা এলো</h3>${bars(byCat('income',f,to),'i')}</div>
+  </div>
+  <div class="card mt"><h3>গত মাসের তুলনায় কোন খাতে কত বদলাল</h3>${keys.length?`<table><thead><tr><th>খাত</th><th class="num">${MONTHS[+m.slice(5)-1]}</th><th class="num">${MONTHS[+pm.slice(5)-1]}</th><th class="num">পার্থক্য</th></tr></thead><tbody>${keys.map(k=>{const a=cur[k]||0,b=prev[k]||0;return `<tr><td>${ic(k)} ${esc(k)}</td><td class="num"><b>${tk(a)}</b></td><td class="num muted">${tk(b)}</td><td class="num"><span class="${a>b?'exp':a<b?'inc':'muted'}">${a>b?'+':''}${tk(a-b)}</span> ${chip(a,b)}</td></tr>`;}).join('')}</tbody></table>`:'<div class="empty">কোনো তথ্য নেই</div>'}</div>
+  <div class="card mt"><h3>বাৎসরিক হিসাব<span class="sp"></span>${legend}<select id="ry" style="width:auto;padding:6px 10px">${ys.map(y=>`<option value="${y}" ${y==repY?'selected':''}>${bnY(y)}</option>`).join('')}</select></h3>
+    ${chart(rows)}
+    <div class="grid g3 mt">
+      <div class="cb"><div class="t">${bnY(repY)} সালে মোট আয়</div><div class="big inc">${tk(ti)}</div><div class="ln"><span class="muted">${bnY(py)}: ${tk(pti)}</span>${chip(ti,pti,false)}</div></div>
+      <div class="cb"><div class="t">${bnY(repY)} সালে মোট খরচ</div><div class="big exp">${tk(te)}</div><div class="ln"><span class="muted">${bnY(py)}: ${tk(pte)}</span>${chip(te,pte)}</div></div>
+      <div class="cb"><div class="t">${bnY(repY)} সালে মোট সঞ্চয়</div><div class="big">${tk(ti-te)}</div><div class="ln"><span class="muted">মাসে গড়ে ${tk((ti-te)/Math.max(1,rows.filter(r=>r[1]||r[2]).length))}</span></div></div>
+    </div>
+    <table class="mt"><thead><tr><th>মাস</th><th class="num">আয়</th><th class="num">খরচ</th><th class="num">উদ্বৃত্ত</th></tr></thead><tbody>${rows.filter(r=>r[1]||r[2]).map(r=>`<tr><td>${r[3]}</td><td class="num inc">${tk(r[1])}</td><td class="num exp">${tk(r[2])}</td><td class="num"><b>${tk(r[1]-r[2])}</b></td></tr>`).join('')||'<tr><td colspan="4" class="muted">কোনো তথ্য নেই</td></tr>'}</tbody></table>
+  </div>`;
+};
+after.report=()=>{$('ry').onchange=e=>{repY=e.target.value;render();};};
+
+V.loan=()=>{
+  const tkn=S.loans.filter(l=>l.kind==='taken'),gv=S.loans.filter(l=>l.kind==='given'),sL=(a,f)=>a.reduce((s,l)=>s+f(l),0);
+  const ord=a=>a.slice().sort((x,y)=>(loanLeft(x)<=0)-(loanLeft(y)<=0)||y.date.localeCompare(x.date));
+  const card=l=>{const paid=loanPaid(l),left=loanLeft(l),p=paid/l.amount,done=left<=0,late=l.due&&!done&&l.due<today();
+    return `<div class="item"><div class="top"><div class="avatar" style="background:${l.kind==='taken'?'var(--exp-soft)':'var(--blue-soft)'}">${l.kind==='taken'?'🏦':'🙋'}</div><div style="flex:1"><h4>${esc(l.person)}</h4><div class="meta">${fmtDate(l.date)}${l.due?' · শেষ তারিখ '+fmtDate(l.due):''}${l.note?' · '+esc(l.note):''}</div></div>${done?'<span class="chip good">✓ শেষ</span>':late?'<span class="chip bad">তারিখ পার</span>':''}</div>
+    <div class="nums"><div><span>মোট</span><b>${tk(l.amount)}</b></div><div><span>${l.kind==='taken'?'পরিশোধ':'ফেরত পেয়েছি'}</span><b class="inc">${tk(paid)}</b></div><div><span>বাকি</span><b class="exp">${tk(left)}</b></div></div>
+    <div class="track"><div class="fill i" style="width:${p*100}%"></div></div><div class="small muted" style="margin-top:4px">${bn((p*100).toFixed(0))}% ${l.kind==='taken'?'পরিশোধ হয়েছে':'ফেরত এসেছে'}</div>
+    <div class="acts">${done?'':`<button class="btn sm" data-act="loanpay" data-id="${l.id}">${l.kind==='taken'?'💳 পরিশোধ করলাম':'💰 টাকা ফেরত পেলাম'}</button>`}<span class="sp"></span><button class="btn ghost sm danger" data-act="loandel" data-id="${l.id}">মুছুন</button></div>
+    ${l.payments.length?`<div class="hist">${l.payments.slice().reverse().map(x=>`<div><span>${fmtDate(x.date)}</span><span>${tk(x.amount)}</span></div>`).join('')}</div>`:''}</div>`;};
+  return `
+  <div class="ph"><div><h2>ঋণের হিসাব</h2><div class="sub">কার কাছে কত দেনা আছে আর কে কত টাকা ফেরত দেবে</div></div><span class="sp"></span><button class="btn" data-act="loannew">${svg('plus')}নতুন ঋণ</button></div>
+  <div class="grid g4">
+    <div class="card stat"><div class="l">🏦 মোট ঋণ নিয়েছি</div><div class="v">${tk(sL(tkn,l=>l.amount))}</div></div>
+    <div class="card stat"><div class="l">✅ পরিশোধ করেছি</div><div class="v inc">${tk(sL(tkn,loanPaid))}</div></div>
+    <div class="card stat"><div class="l">⏳ বাকি দেনা</div><div class="v exp">${tk(sL(tkn,loanLeft))}</div></div>
+    <div class="card stat"><div class="l">🙋 বাকি পাওনা</div><div class="v blue">${tk(sL(gv,loanLeft))}</div><div class="small muted">মোট ধার দিয়েছি ${tk(sL(gv,l=>l.amount))}</div></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card"><h3>আমার দেনা <span class="chip bad">${bn(tkn.filter(l=>loanLeft(l)>0).length)}টি চলমান</span></h3>${tkn.length?ord(tkn).map(card).join(''):'<div class="empty"><span class="big">🎉</span>কোনো দেনা নেই</div>'}</div>
+    <div class="card"><h3>আমার পাওনা <span class="chip info">${bn(gv.filter(l=>loanLeft(l)>0).length)}টি চলমান</span></h3>${gv.length?ord(gv).map(card).join(''):'<div class="empty"><span class="big">🤝</span>কাউকে ধার দেওয়া নেই</div>'}</div>
+  </div>`;
+};
+
+V.save=()=>{
+  const t=today(),m=ym(t);
+  const totT=S.goals.reduce((a,g)=>a+g.target,0),totS=S.goals.reduce((a,g)=>a+goalSaved(g),0);
+  const thisM=S.goals.reduce((a,g)=>a+g.deposits.filter(d=>ym(d.date)===m).reduce((s,d)=>s+d.amount,0),0);
+  let need=0;for(const g of S.goals){const left=g.target-goalSaved(g);if(left>0&&g.deadline&&g.deadline>=t)need+=left/Math.max(1,monthsBetween(t,g.deadline)+1);}
+  let avg=0;{let mm=prevMonth(m),c=0;for(let i=0;i<3;i++){const v=sum('income',mm+'-01',mm+'-31');if(v){avg+=v;c++;}mm=prevMonth(mm);}avg=c?avg/c:0;}
+  const base=S.settings.salary||avg||sum('income',m+'-01',t),mi=sum('income',m+'-01',t),me=sum('expense',m+'-01',t);
+  const goal=g=>{const s=goalSaved(g),left=Math.max(0,g.target-s),p=s/g.target;let plan='';
+    if(left>0&&g.deadline){const ml=Math.max(1,monthsBetween(t,g.deadline)+1);plan=g.deadline<t?'<span class="chip bad">সময় পার হয়ে গেছে</span>':`🗓️ প্রতি মাসে <b>${tk(left/ml)}</b> করে জমালে ${bn(ml)} মাসে লক্ষ্য পূরণ হবে`;}
+    else if(left>0){const r=g.deposits.filter(d=>d.date>=addDays(t,-90)).reduce((a,d)=>a+d.amount,0)/3;plan=r>0?`এখনকার মতো মাসে ${tk(r)} করে জমালে আরও ${bn(Math.ceil(left/r))} মাস লাগবে`:'লক্ষ্যের তারিখ দিলে মাসে কত জমাতে হবে তা হিসাব করে দেখাব';}
+    return `<div class="item"><div class="top">${ring(p,left<=0?'var(--inc)':'var(--gold)',72,8,`<b style="font-size:14px">${bn(Math.min(100,p*100).toFixed(0))}%</b>`)}<div style="flex:1"><h4>${esc(g.name)}</h4><div class="meta">${g.deadline?'লক্ষ্য তারিখ: '+fmtDate(g.deadline):'কোনো তারিখ ঠিক করা নেই'}</div>${left<=0?'<span class="chip good" style="margin-top:4px">🎉 লক্ষ্য পূরণ হয়েছে!</span>':''}</div></div>
+    <div class="nums"><div><span>লক্ষ্য</span><b>${tk(g.target)}</b></div><div><span>জমা হয়েছে</span><b class="inc">${tk(s)}</b></div><div><span>আরও লাগবে</span><b class="exp">${tk(left)}</b></div></div>
+    <div class="small">${plan}</div>
+    <div class="acts"><button class="btn gold sm" data-act="goaldep" data-id="${g.id}">＋ জমা করুন</button><button class="btn ghost sm" data-act="goalwd" data-id="${g.id}">তুলে নিন</button><span class="sp"></span><button class="btn ghost sm danger" data-act="goaldel" data-id="${g.id}">মুছুন</button></div>
+    ${g.deposits.length?`<div class="hist">${g.deposits.slice().reverse().map(d=>`<div><span>${fmtDate(d.date)}</span><span class="${d.amount<0?'exp':'inc'}">${d.amount<0?'তুলেছি ':'জমা '}${tk(Math.abs(d.amount))}</span></div>`).join('')}</div>`:''}</div>`;};
+  return `
+  <div class="ph"><div><h2>সঞ্চয় প্ল্যান</h2><div class="sub">লক্ষ্য ঠিক করুন আর প্রতি মাসে অল্প অল্প করে জমান</div></div><span class="sp"></span><button class="btn gold" data-act="goalnew">${svg('plus')}নতুন লক্ষ্য</button></div>
+  <div class="grid g4">
+    <div class="card stat"><div class="l">🎯 মোট লক্ষ্য</div><div class="v">${tk(totT)}</div></div>
+    <div class="card stat"><div class="l">🐷 মোট জমা</div><div class="v inc">${tk(totS)}</div><div class="small muted">${totT?bn((totS/totT*100).toFixed(0))+'% পূরণ':''}</div></div>
+    <div class="card stat"><div class="l">📅 এ মাসে জমা</div><div class="v gold">${tk(thisM)}</div></div>
+    <div class="card stat"><div class="l">📌 মাসে জমাতে হবে</div><div class="v exp">${tk(need)}</div><div class="small muted">সব লক্ষ্য সময়মতো পূরণ করতে</div></div>
+  </div>
+  <div class="card mt"><h3>📋 আরিফের জন্য বাজেট ভাগ (৫০/৩০/২০ নিয়ম)</h3>
+  ${base?`<div class="small muted" style="margin:-6px 0 12px">${S.settings.salary?'মাসিক সেলারি':'গড় মাসিক আয়'} ${tk(base)} ধরে হিসাব:</div><div class="cmp">
+    <div class="cb"><div class="t">৫০% · জরুরি খরচ</div><div class="big">${tk(base*.5)}</div><div class="small muted" style="margin-top:4px">বাসা ভাড়া, বাজার, বিল, যাতায়াত</div></div>
+    <div class="cb"><div class="t">৩০% · শখের খরচ</div><div class="big">${tk(base*.3)}</div><div class="small muted" style="margin-top:4px">কেনাকাটা, বিনোদন, বাইরে খাওয়া</div></div>
+    <div class="cb" style="background:var(--gold-soft)"><div class="t">২০% · সঞ্চয়</div><div class="big gold">${tk(base*.2)}</div><div class="small muted" style="margin-top:4px">সঞ্চয়ের লক্ষ্য আর বাড়তি ঋণ পরিশোধ</div></div>
+    <div class="cb"><div class="t">এ মাসে আপনার সঞ্চয়ের হার</div><div class="big">${mi?bn(Math.max(0,(mi-me)/mi*100).toFixed(0))+'%':'—'}</div><div style="margin-top:4px">${mi?((mi-me)/mi>=.2?'<span class="chip good">লক্ষ্য পূরণ হয়েছে ✓</span>':'<span class="chip bad">২০% এর কম</span>'):''}</div></div>
+  </div><div class="ins mt" style="margin-bottom:0"><span class="e">🛡️</span><div>বিপদের সময়ের জন্য জরুরি তহবিলে অন্তত <b>${tk(base*.5*6)}</b> রাখার চেষ্টা করুন। এতে ৬ মাসের জরুরি খরচ চলে যাবে।</div></div>`:'<div class="empty">সেলারি ঠিক করুন বা আয় লিখুন, তাহলে এখানে বাজেট পরামর্শ দেখাবে। <br><button class="btn sm mt" data-go="salary">সেলারি ঠিক করুন</button></div>'}</div>
+  <div class="card mt"><h3>আমার সঞ্চয়ের লক্ষ্যগুলো</h3>${S.goals.length?`<div class="grid g2">${S.goals.map(goal).join('')}</div>`:'<div class="empty"><span class="big">🐷</span>এখনও কোনো লক্ষ্য নেই।<br>যেমন: জরুরি তহবিল, বাইক, ল্যাপটপ, হজ।<br><button class="btn gold sm mt" data-act="goalnew">প্রথম লক্ষ্য ঠিক করুন</button></div>'}</div>`;
+};
+
+V.salary=()=>{
+  const s=S.settings,t=today(),m=ym(t),y=t.slice(0,4);
+  const sal=sortTx(S.tx.filter(x=>x.type==='income'&&x.cat==='সেলারি'));
+  const thisM=sal.filter(x=>ym(x.date)===m).reduce((a,x)=>a+x.amount,0),yTot=sal.filter(x=>x.date.startsWith(y)).reduce((a,x)=>a+x.amount,0);
+  const me=sum('expense',m+'-01',t),base=s.salary||thisM;
+  return `
+  <div class="ph"><div><h2>সেলারি</h2><div class="sub">প্রতি মাসের সেলারি এক ক্লিকেই লিখে রাখুন</div></div></div>
+  ${salaryPending()?`<div class="banner" style="margin:0 0 16px"><span class="em">💼</span><div style="flex:1"><b>${monthName(m)} মাসের সেলারি এখনও লেখা হয়নি</b><div class="small muted">${tk(s.salary)}</div></div><button class="btn gold" data-act="salrecv">✓ সেলারি পেয়েছি</button></div>`:''}
+  <div class="grid g4">
+    <div class="card stat"><div class="l">💼 মাসিক সেলারি</div><div class="v">${tk(s.salary)}</div><div class="small muted">${s.salary?'প্রতি মাসের '+bn(s.salaryDay)+' তারিখে':'এখনও ঠিক করা হয়নি'}</div></div>
+    <div class="card stat"><div class="l">📥 এ মাসে পেয়েছি</div><div class="v inc">${tk(thisM)}</div><div class="small">${thisM?'<span class="chip good">✓ পেয়েছি</span>':'<span class="chip same">এখনও পাইনি</span>'}</div></div>
+    <div class="card stat"><div class="l">📆 ${bnY(y)} সালে মোট</div><div class="v">${tk(yTot)}</div></div>
+    <div class="card stat"><div class="l">🧮 সেলারির কত % খরচ হয়েছে</div><div class="v ${base&&me>base?'exp':''}">${base?bn((me/base*100).toFixed(0))+'%':'—'}</div><div class="small muted">${base?'বাকি আছে '+tk(base-me):''}</div></div>
+  </div>
+  <div class="card mt"><h3>⚙️ সেলারির তথ্য</h3>
+    <div class="grid g4" style="align-items:end">
+      <div><label class="lb">মাসিক সেলারি (৳)</label><input id="sAmt" type="number" inputmode="decimal" value="${s.salary||''}" placeholder="যেমন: ৪৫০০০"></div>
+      <div><label class="lb">মাসের কত তারিখে পান</label><input id="sDay" type="number" min="1" max="31" value="${s.salaryDay||1}"></div>
+      <div><label class="lb">প্রতিষ্ঠানের নাম</label><input id="sSrc" value="${esc(s.salarySrc)}" placeholder="ঐচ্ছিক"></div>
+      <div><button class="btn" style="width:100%" data-act="salsave">সংরক্ষণ করুন</button></div>
+    </div></div>
+  <div class="card mt"><h3>📜 সেলারির ইতিহাস</h3>${sal.length?sal.map(txRow).join(''):'<div class="empty">এখনও কোনো সেলারি লেখা হয়নি</div>'}</div>`;
+};
+
+V.set=()=>{
+  const chips=t=>S.cats[t].map(c=>`<span class="chip same" style="font-size:13px;padding:6px 6px 6px 10px;font-weight:500">${ic(c)} ${esc(c)} <button class="x" style="width:22px;height:22px;font-size:11px;background:none" data-act="catrm" data-t="${t}" data-c="${esc(c)}">✕</button></span>`).join('');
+  return `
+  <div class="ph"><h2>সেটিংস</h2></div>
+  <div class="card" style="margin-bottom:16px"><h3>📗 Google Sheet সংযোগ<span class="sp"></span><span id="syncChip2" class="chip same"></span></h3>
+    <p class="small muted" style="margin-top:-6px">সংযোগ করলে সব লেনদেন, মাসিক হিসাব, ঋণ আর সঞ্চয়ের তথ্য আপনার Google Sheet-এ নিজে থেকেই আপডেট হবে। ইন্টারনেট না থাকলেও অ্যাপ আগের মতোই চলবে, আর সংযোগ এলেই সব তথ্য শীটে চলে যাবে। শীটটি অনলাইন ব্যাকআপের কাজও করবে।</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:end">
+      <div><label class="lb">Web App লিংক (Apps Script থেকে কপি করা)</label><input id="syU" value="${esc(S.settings.syncUrl)}" placeholder="https://script.google.com/macros/s/..../exec"></div>
+      <div><label class="lb">গোপন কোড</label><input id="syK" value="${esc(S.settings.syncKey)}"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn" data-act="syncsave">🔗 সংরক্ষণ ও সংযোগ</button>
+      <button class="btn ghost" data-act="syncnow">🔄 এখনই সিঙ্ক করুন</button>
+      ${S.settings.syncUrl?'<button class="btn gold" data-act="phonelink">📱 ফোন যুক্ত করার লিংক কপি করুন</button>':''}
+      ${S.settings.syncUrl?'<button class="btn ghost danger" data-act="syncoff">সংযোগ বন্ধ করুন</button>':''}
+    </div>
+    <details class="guide" ${S.settings.syncUrl?'':'open'}><summary>📘 কিভাবে সংযোগ করবেন (একবারই করতে হবে, ৫ মিনিট লাগবে)</summary><ol>
+      <li>যে Google Sheet-এ হিসাব রাখতে চান সেটি খুলুন। নতুন শীট বানাতে <code class="k">sheets.new</code> লিখে খুলুন।</li>
+      <li>শীটের উপরের মেনু থেকে <b>Extensions → Apps Script</b> খুলুন।</li>
+      <li>নিচের বাটন চেপে স্ক্রিপ্ট কপি করুন। তারপর Apps Script-এ আগের সব লেখা মুছে কপি করা স্ক্রিপ্ট পেস্ট করুন এবং 💾 <b>Save</b> চাপুন।<br><button class="btn gold sm" style="margin-top:6px" data-act="copyscript">📋 স্ক্রিপ্ট কপি করুন</button></li>
+      <li>ডান দিকের উপরে <b>Deploy → New deployment</b> চাপুন। ⚙️ থেকে <b>Web app</b> বাছুন। <b>Execute as: Me</b> আর <b>Who has access: Anyone</b> দিয়ে <b>Deploy</b> চাপুন।</li>
+      <li>Google অনুমতি চাইবে। <b>Authorize access</b> চেপে নিজের অ্যাকাউন্ট বাছুন। এরপর <b>Advanced → Go to … (unsafe)</b> চেপে <b>Allow</b> দিন। স্ক্রিপ্টটি আপনার নিজের, তাই এতে কোনো ঝুঁকি নেই।</li>
+      <li>যে <b>Web app URL</b> দেখাবে সেটি কপি করুন। তারপর উপরের ঘরে পেস্ট করে <b>সংরক্ষণ ও সংযোগ</b> চাপুন। ✅</li>
+    </ol><div class="small muted">গোপন কোডটি শুধু আপনার স্ক্রিপ্টই চেনে, তাই লিংক অন্য কেউ পেলেও শীটে কিছু লিখতে পারবে না। কোড বদলালে স্ক্রিপ্টটি আবার কপি করে পেস্ট করতে হবে আর আবার Deploy করতে হবে।</div></details>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>🎯 মাসিক খরচের বাজেট</h3><p class="small muted" style="margin-top:-6px">মাসে সর্বোচ্চ কত খরচ করতে চান তা লিখুন। খরচ বাজেটের কাছাকাছি গেলে বা ছাড়িয়ে গেলে হোম পেজে সতর্ক করা হবে।</p>
+      <div style="display:flex;gap:8px"><input id="bud" type="number" inputmode="decimal" value="${S.settings.budget||''}" placeholder="যেমন: ৩৫০০০"><button class="btn" data-act="budsave">সংরক্ষণ</button></div></div>
+    <div class="card"><h3>🎨 দেখতে কেমন হবে</h3><div class="pills">${[['auto','স্বয়ংক্রিয়'],['light','☀️ লাইট'],['dark','🌙 ডার্ক']].map(([v,l])=>`<button class="${S.settings.theme===v?'on':''}" data-act="settheme" data-v="${v}">${l}</button>`).join('')}</div></div>
+    <div class="card"><h3>💸 খরচের খাত</h3><div style="display:flex;gap:6px;flex-wrap:wrap">${chips('expense')}</div><div style="display:flex;gap:8px;margin-top:12px"><input id="ncE" placeholder="নতুন খাতের নাম"><button class="btn" data-act="catadd" data-t="expense">যোগ</button></div></div>
+    <div class="card"><h3>💰 আয়ের উৎস</h3><div style="display:flex;gap:6px;flex-wrap:wrap">${chips('income')}</div><div style="display:flex;gap:8px;margin-top:12px"><input id="ncI" placeholder="নতুন উৎসের নাম"><button class="btn" data-act="catadd" data-t="income">যোগ</button></div></div>
+    <div class="card"><h3>💾 ব্যাকআপ ও নিরাপত্তা</h3>
+      <div class="ins g"><span class="e">🔒</span><div>অ্যাপটি ইন্টারনেট ছাড়াই চলে। সব তথ্য শুধু এই কম্পিউটারের ব্রাউজারে থাকে, কোথাও পাঠানো হয় না।</div></div>
+      <div class="small muted" style="margin-bottom:10px">শেষ ব্যাকআপ: ${S.settings.lastBackup?fmtDate(S.settings.lastBackup):'কখনো নেওয়া হয়নি'}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="export">⬇ ব্যাকআপ ডাউনলোড</button><button class="btn ghost" data-act="csv">📊 Excel (CSV)</button><label class="btn ghost" style="margin:0">⬆ ব্যাকআপ থেকে ফেরত আনুন<input type="file" id="imp" accept=".json" hidden></label></div></div>
+    <div class="card"><h3>🧪 অন্যান্য</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" data-act="demo">নমুনা ডেটা দিয়ে দেখুন</button><button class="btn ghost danger" data-act="clear">সব তথ্য মুছে ফেলুন</button></div>
+      <div class="small muted" style="margin-top:12px">শর্টকাট: <b>N</b> চাপলে নতুন লেনদেন যোগ করার ঘর খুলবে · <b>Esc</b> চাপলে বন্ধ হবে</div></div>
+  </div>`;
+};
+after.set=()=>{$('imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.tx)throw 0;askConfirm('এখনকার সব তথ্যের জায়গায় এই ব্যাকআপের তথ্য বসবে। চালিয়ে যাবেন?','হ্যাঁ, ফেরত আনুন',()=>{const del=allIdsDead(),keep=keepLocal(),now=Date.now();S=fix(d,true);S.del=Object.assign(del,S.del);for(const c of [S.tx,S.loans,S.goals])for(const x of c){x.u=now;delete S.del[x.id];}Object.assign(S.settings,keep);setTouch();save();toast('ব্যাকআপ থেকে তথ্য ফেরত আনা হয়েছে');});}catch(x){toast('এটি সঠিক ব্যাকআপ ফাইল নয়','⚠️');}};r.readAsText(f);};};
+
+V.more=()=>`
+  <div class="ph"><h2>আরও</h2></div>
+  <div class="more">
+    <button data-go="report"><span class="e">📊</span><b>রিপোর্ট</b><small>মাসিক ও বাৎসরিক হিসাব</small></button>
+    <button data-go="loan"><span class="e">🤝</span><b>ঋণ</b><small>দেনা ও পাওনার হিসাব</small></button>
+    <button data-go="salary"><span class="e">💼</span><b>সেলারি</b><small>মাসিক বেতন</small></button>
+    <button data-go="save"><span class="e">🐷</span><b>সঞ্চয় প্ল্যান</b><small>লক্ষ্য ও জমা</small></button>
+    <button data-go="set"><span class="e">⚙️</span><b>সেটিংস</b><small>বাজেট, খাত, ব্যাকআপ</small></button>
+    <button data-act="theme"><span class="e">🌓</span><b>থিম</b><small>লাইট / ডার্ক</small></button>
+  </div>`;
+
+/* =================== SHEETS =================== */
+function openTx(o={}){
+  const ed=o.id?S.tx.find(x=>x.id===o.id):null;
+  let type=ed?ed.type:(o.type||'expense'),cat=ed?ed.cat:null,date=ed?ed.date:today();
+  openSheet(`<div class="sh-h"><h3>${ed?'লেনদেন বদলান':'নতুন লেনদেন'}</h3><button class="x" data-act="close">✕</button></div>
+   <div class="seg2" id="ttype"><button data-v="expense">💸 খরচ</button><button data-v="income">💰 আয়</button></div>
+   <div class="amtbox"><span>৳</span><input id="tamt" type="number" inputmode="decimal" placeholder="০" value="${ed?ed.amount:''}" autofocus></div>
+   <div class="qamt">${[50,100,200,500,1000,5000].map(v=>`<button data-q="${v}">+${bn(v)}</button>`).join('')}</div>
+   <div class="lbl2" id="tcl"></div><div class="cgrid" id="tcats"></div>
+   <div class="lbl2">তারিখ</div><div class="chips" id="tdate"><button data-d="0">আজ</button><button data-d="-1">গতকাল</button><input type="date" id="tdin" value="${date}"></div>
+   <div class="lbl2">নোট <span class="muted">(না লিখলেও চলবে)</span></div><input id="tnote" placeholder="যেমন: দুপুরের খাবার" value="${esc(ed?.note||'')}">
+   <div class="sh-f">${ed?'<button class="btn ghost danger" id="tdel">🗑 মুছুন</button>':''}<button class="btn big" id="tsave">✓ সংরক্ষণ করুন</button></div>`,sh=>{
+    const amt=sh.querySelector('#tamt');
+    const draw=()=>{
+      sh.querySelectorAll('#ttype button').forEach(b=>b.classList.toggle('on',b.dataset.v===type));
+      sh.querySelector('#tcl').innerHTML=type==='expense'?'কোন খাতে খরচ হলো?':'কোথা থেকে টাকা এলো?';
+      if(cat&&!S.cats[type].includes(cat))cat=null;
+      sh.querySelector('#tcats').innerHTML=S.cats[type].map(c=>`<button class="cbtn ${c===cat?'on':''}" data-c="${esc(c)}"><span class="e">${ic(c)}</span>${esc(c)}</button>`).join('');
+      const t=today();sh.querySelectorAll('#tdate button').forEach(b=>b.classList.toggle('on',addDays(t,+b.dataset.d)===date));sh.querySelector('#tdin').value=date;
+      sh.querySelector('#tsave').style.background=type==='income'?'var(--inc)':'';
+    };
+    sh.querySelector('#ttype').onclick=e=>{const b=e.target.closest('button');if(b){type=b.dataset.v;cat=null;draw();}};
+    sh.querySelector('#tcats').onclick=e=>{const b=e.target.closest('.cbtn');if(b){cat=b.dataset.c;draw();}};
+    sh.querySelector('.qamt').onclick=e=>{const b=e.target.closest('button');if(b){amt.value=(parseFloat(amt.value)||0)+ +b.dataset.q;}};
+    sh.querySelector('#tdate').onclick=e=>{const b=e.target.closest('button');if(b){date=addDays(today(),+b.dataset.d);draw();}};
+    sh.querySelector('#tdin').onchange=e=>{date=e.target.value||today();draw();};
+    const doSave=()=>{
+      const a=parseFloat(amt.value);
+      if(!(a>0)){shake(sh.querySelector('.amtbox'));amt.focus();toast('টাকার পরিমাণ লিখুন','✍️');return;}
+      if(!cat){shake(sh.querySelector('#tcats'));toast(type==='expense'?'কোন খাতে খরচ হলো, সেটা বাছুন':'টাকা কোথা থেকে এলো, সেটা বাছুন','👆');return;}
+      const rec={type,amount:a,cat,date,note:sh.querySelector('#tnote').value.trim()};
+      if(ed)touch(Object.assign(ed,rec));else S.tx.push({id:uid(),...rec});
+      closeSheet();save();toast(ed?'বদল সংরক্ষণ হয়েছে':(type==='income'?`${tk(a)} আয় লেখা হয়েছে`:`${tk(a)} খরচ লেখা হয়েছে`));
+    };
+    sh.querySelector('#tsave').onclick=doSave;
+    sh.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')doSave();}));
+    if(ed)sh.querySelector('#tdel').onclick=()=>askConfirm(`${ic(ed.cat)} ${esc(ed.cat)} খাতের ${tk(ed.amount)} এর লেনদেনটি মুছে ফেলবেন?`,'হ্যাঁ, মুছুন',()=>{S.tx=S.tx.filter(x=>x.id!==ed.id);kill(ed.id,ed.u);save();toast('লেনদেন মুছে ফেলা হয়েছে','🗑');});
+    draw();
+  });
+}
+function openLoanNew(){
+  let kind='taken';
+  openSheet(`<div class="sh-h"><h3>নতুন ঋণ</h3><button class="x" data-act="close">✕</button></div>
+   <div class="seg2" id="lk"><button data-v="taken">🏦 আমি ঋণ নিয়েছি</button><button data-v="given">🙋 আমি ধার দিয়েছি</button></div>
+   <div class="amtbox"><span>৳</span><input id="la" type="number" inputmode="decimal" placeholder="০" autofocus></div>
+   <div class="fg mt"><div><label class="lb" id="lpl">কার কাছ থেকে নিয়েছেন?</label><input id="lp" placeholder="নাম বা ব্যাংকের নাম"></div>
+   <div class="fg2"><div><label class="lb">কবে নিয়েছেন</label><input id="ld" type="date" value="${today()}"></div><div><label class="lb">কবের মধ্যে শোধ করতে হবে (ঐচ্ছিক)</label><input id="ldu" type="date"></div></div>
+   <div><label class="lb">নোট (ঐচ্ছিক)</label><input id="ln" placeholder="যেমন: মাসিক কিস্তি ৫০০০"></div></div>
+   <label class="check"><input type="checkbox" id="lt"> <span id="ltl"></span></label>
+   <div class="sh-f"><button class="btn big" id="ls">✓ যোগ করুন</button></div>`,sh=>{
+    const draw=()=>{sh.querySelectorAll('#lk button').forEach(b=>b.classList.toggle('on',b.dataset.v===kind));
+      sh.querySelector('#lpl').textContent=kind==='taken'?'কার কাছ থেকে নিয়েছেন?':'কাকে ধার দিয়েছেন?';
+      sh.querySelector('#ltl').textContent=kind==='taken'?'এই টাকা আয়ের তালিকাতেও যোগ করুন (ব্যালেন্সে যোগ হবে)':'এই টাকা খরচের তালিকাতেও যোগ করুন (ব্যালেন্স থেকে কমবে)';};
+    sh.querySelector('#lk').onclick=e=>{const b=e.target.closest('button');if(b){kind=b.dataset.v;draw();}};
+    sh.querySelector('#ls').onclick=()=>{
+      const a=parseFloat(sh.querySelector('#la').value),p=sh.querySelector('#lp').value.trim();
+      if(!(a>0)){shake(sh.querySelector('.amtbox'));return toast('টাকার পরিমাণ লিখুন','✍️');}
+      if(!p){shake(sh.querySelector('#lp'));return toast('নাম লিখুন','✍️');}
+      const d=sh.querySelector('#ld').value||today();
+      S.loans.push({id:uid(),kind,person:p,amount:a,date:d,due:sh.querySelector('#ldu').value,note:sh.querySelector('#ln').value.trim(),payments:[]});
+      if(sh.querySelector('#lt').checked)S.tx.push({id:uid(),type:kind==='taken'?'income':'expense',amount:a,cat:kind==='taken'?'ঋণ গ্রহণ':'অন্যান্য',date:d,note:(kind==='taken'?'ঋণ নিলাম: ':'ধার দিলাম: ')+p});
+      closeSheet();save();toast('ঋণের হিসাব যোগ হয়েছে');};
+    draw();
+  });
+}
+function openLoanPay(id){
+  const l=S.loans.find(x=>x.id===id),left=loanLeft(l),tk_=l.kind==='taken';
+  openSheet(`<div class="sh-h"><h3>${tk_?'পরিশোধ করলাম':'টাকা ফেরত পেলাম'}: ${esc(l.person)}</h3><button class="x" data-act="close">✕</button></div>
+   <div class="small muted" style="text-align:center">এখনও বাকি ${tk(left)}</div>
+   <div class="amtbox"><span>৳</span><input id="pa" type="number" inputmode="decimal" placeholder="০" autofocus></div>
+   <div class="qamt"><button data-v="${left}">পুরো বাকি টাকা (${tk(left)})</button>${left>=2?`<button data-v="${Math.round(left/2)}">অর্ধেক</button>`:''}</div>
+   <div class="fg mt"><div><label class="lb">তারিখ</label><input id="pd" type="date" value="${today()}"></div></div>
+   <label class="check"><input type="checkbox" id="pt" checked> লেনদেনের তালিকাতেও ${tk_?'খরচ':'আয়'} হিসেবে যোগ করুন</label>
+   <div class="sh-f"><button class="btn big" id="ps">✓ সংরক্ষণ করুন</button></div>`,sh=>{
+    const inp=sh.querySelector('#pa');
+    sh.querySelector('.qamt').onclick=e=>{const b=e.target.closest('button');if(b)inp.value=b.dataset.v;};
+    sh.querySelector('#ps').onclick=()=>{const a=parseFloat(inp.value);if(!(a>0)){shake(sh.querySelector('.amtbox'));return toast('টাকার পরিমাণ লিখুন','✍️');}
+      const amt=Math.min(a,left),d=sh.querySelector('#pd').value||today();
+      l.payments.push({id:uid(),amount:amt,date:d});touch(l);
+      if(sh.querySelector('#pt').checked)S.tx.push({id:uid(),type:tk_?'expense':'income',amount:amt,cat:tk_?'ঋণ পরিশোধ':'ঋণ ফেরত',date:d,note:(tk_?'ঋণ পরিশোধ: ':'ধারের টাকা ফেরত: ')+l.person});
+      closeSheet();save();toast(loanLeft(l)<=0?'🎉 ঋণটি পুরোপুরি শেষ!':'সংরক্ষণ হয়েছে');};
+  });
+}
+function openGoalNew(){
+  openSheet(`<div class="sh-h"><h3>নতুন সঞ্চয়ের লক্ষ্য</h3><button class="x" data-act="close">✕</button></div>
+   <div class="fg"><div><label class="lb">কিসের জন্য জমাবেন?</label><input id="gn" placeholder="যেমন: জরুরি তহবিল, বাইক, ল্যাপটপ" autofocus></div>
+   <div class="chips" id="gsug">${['🛡️ জরুরি তহবিল','🏍️ বাইক','💻 ল্যাপটপ','🕋 হজ','✈️ ভ্রমণ','🏠 বাড়ি'].map(s=>`<button>${s}</button>`).join('')}</div>
+   <div class="fg2"><div><label class="lb">মোট কত টাকা দরকার</label><input id="gt" type="number" inputmode="decimal" placeholder="৳"></div><div><label class="lb">কবের মধ্যে চান</label><input id="gd" type="date"></div></div>
+   <div><label class="lb">এখনই কিছু জমা আছে? (ঐচ্ছিক)</label><input id="gi" type="number" inputmode="decimal" placeholder="৳ ০"></div>
+   <div class="ins" id="gprev" style="display:none;margin:0"></div></div>
+   <div class="sh-f"><button class="btn gold big" id="gs">✓ লক্ষ্য ঠিক করুন</button></div>`,sh=>{
+    const q=s=>sh.querySelector(s);
+    q('#gsug').onclick=e=>{const b=e.target.closest('button');if(b){q('#gn').value=b.textContent.replace(/^\S+\s/,'');q('#gt').focus();}};
+    const prev=()=>{const t=parseFloat(q('#gt').value)||0,i=parseFloat(q('#gi').value)||0,d=q('#gd').value,el=q('#gprev');
+      if(t>i&&d&&d>today()){const ml=Math.max(1,monthsBetween(today(),d)+1);el.style.display='flex';el.innerHTML=`<span class="e">🗓️</span><div>লক্ষ্য পূরণ করতে প্রতি মাসে <b>${tk((t-i)/ml)}</b> করে জমাতে হবে (${bn(ml)} মাস)</div>`;}else el.style.display='none';};
+    ['#gt','#gi','#gd'].forEach(s=>q(s).addEventListener('input',prev));
+    q('#gs').onclick=()=>{const n=q('#gn').value.trim(),t=parseFloat(q('#gt').value),i=parseFloat(q('#gi').value)||0;
+      if(!n){shake(q('#gn'));return toast('লক্ষ্যের নাম লিখুন','✍️');}
+      if(!(t>0)){shake(q('#gt'));return toast('কত টাকা দরকার সেটা লিখুন','✍️');}
+      const g={id:uid(),name:n,target:t,deadline:q('#gd').value,created:today(),deposits:[]};if(i>0)g.deposits.push({id:uid(),amount:i,date:today()});
+      S.goals.push(g);closeSheet();save();toast('নতুন লক্ষ্য ঠিক হয়েছে','🎯');};
+  });
+}
+function openGoalMove(id,wd){
+  const g=S.goals.find(x=>x.id===id),s=goalSaved(g),left=Math.max(0,g.target-s);
+  openSheet(`<div class="sh-h"><h3>${wd?'টাকা তুলে নিন':'জমা করুন'}: ${esc(g.name)}</h3><button class="x" data-act="close">✕</button></div>
+   <div class="small muted" style="text-align:center">${wd?'এখন জমা আছে '+tk(s):'লক্ষ্য পূরণে আরও লাগবে '+tk(left)}</div>
+   <div class="amtbox"><span>৳</span><input id="ga" type="number" inputmode="decimal" placeholder="০" autofocus></div>
+   <div class="qamt">${[500,1000,2000,5000].map(v=>`<button data-v="${v}">${tk(v)}</button>`).join('')}</div>
+   ${wd?'':`<label class="check"><input type="checkbox" id="gtx"> এই টাকা খরচের তালিকায় "সঞ্চয়" হিসেবেও লিখুন (ব্যালেন্স থেকে কমবে)</label>`}
+   <div class="sh-f"><button class="btn ${wd?'':'gold'} big" id="gok">✓ ${wd?'তুলে নিন':'জমা করুন'}</button></div>`,sh=>{
+    const inp=sh.querySelector('#ga');
+    sh.querySelector('.qamt').onclick=e=>{const b=e.target.closest('button');if(b)inp.value=b.dataset.v;};
+    sh.querySelector('#gok').onclick=()=>{const a=parseFloat(inp.value);
+      if(!(a>0)){shake(sh.querySelector('.amtbox'));return toast('টাকার পরিমাণ লিখুন','✍️');}
+      if(wd&&a>s)return toast('যত টাকা জমা আছে, তার বেশি তোলা যাবে না','⚠️');
+      g.deposits.push({id:uid(),amount:wd?-a:a,date:today()});touch(g);
+      if(!wd&&sh.querySelector('#gtx').checked){if(!S.cats.expense.includes('সঞ্চয়'))S.cats.expense.push('সঞ্চয়');ICON['সঞ্চয়']='🐷';S.tx.push({id:uid(),type:'expense',amount:a,cat:'সঞ্চয়',date:today(),note:'সঞ্চয়: '+g.name});}
+      closeSheet();save();toast(wd?'টাকা তুলে নেওয়া হয়েছে':(goalSaved(g)>=g.target?'🎉 লক্ষ্য পূরণ হয়েছে!':'জমা হয়েছে'),'🐷');};
+  });
+}
+function onboarding(){
+  openSheet(`<div style="text-align:center;padding:6px 0 4px"><div class="logo" style="width:64px;height:64px;font-size:32px;margin:0 auto 12px;border-radius:20px">৳</div>
+   <h3 style="margin:0;font-size:22px">আরিফের একাউন্টস-এ স্বাগতম</h3><p class="muted" style="margin:6px 0 0">আপনার আয়, খরচ, ঋণ আর সঞ্চয়ের হিসাব এক জায়গায়। ইন্টারনেট ছাড়াই চলে।</p></div>
+   <div class="fg mt"><div><label class="lb">💼 আপনার মাসিক সেলারি কত? (ঐচ্ছিক)</label><input id="oS" type="number" inputmode="decimal" placeholder="যেমন: ৪৫০০০"></div>
+   <div class="fg2"><div><label class="lb">📅 মাসের কত তারিখে পান?</label><input id="oD" type="number" min="1" max="31" value="1"></div><div><label class="lb">🎯 মাসে সর্বোচ্চ কত খরচ করতে চান?</label><input id="oB" type="number" inputmode="decimal" placeholder="ঐচ্ছিক"></div></div></div>
+   <div class="small muted" style="margin-top:10px">এগুলো পরে সেটিংস থেকেও বদলানো যাবে।</div>
+   <div class="sh-f"><button class="btn ghost" id="oDemo">নমুনা দেখুন</button><button class="btn big" id="oGo">শুরু করুন →</button></div>`,sh=>{
+    sh.querySelector('#oGo').onclick=()=>{S.settings.salary=parseFloat(sh.querySelector('#oS').value)||0;S.settings.salaryDay=Math.min(31,Math.max(1,parseInt(sh.querySelector('#oD').value)||1));S.settings.budget=parseFloat(sh.querySelector('#oB').value)||0;S.settings.onboarded=true;setTouch();closeSheet();save();toast('সব প্রস্তুত! প্রথম লেনদেনটি লিখুন','🎉');};
+    sh.querySelector('#oDemo').onclick=()=>{demo();S.settings.onboarded=true;closeSheet();save();toast('নমুনা ডেটা দেখানো হচ্ছে। সেটিংস থেকে মুছে ফেলা যাবে','🧪');};
+  });
+}
+
+/* =================== ACTIONS =================== */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return;}
+  const a=e.target.closest('[data-act]');if(!a)return;
+  const id=a.dataset.id,act=a.dataset.act;
+  ({
+    close:closeSheet,
+    addtx:()=>openTx({type:a.dataset.type}),
+    edittx:()=>openTx({id}),
+    theme:()=>{S.settings.theme=isDark()?'light':'dark';save();},
+    settheme:()=>{S.settings.theme=a.dataset.v;save();},
+    txm:()=>{txM=shiftMonth(txM||ym(today()),+a.dataset.d);render();},
+    txall:()=>{txM=txM?'':ym(today());render();},
+    txt:()=>{txType=a.dataset.v;render();},
+    rm:()=>{repM=shiftMonth(repM,+a.dataset.d);render();},
+    loannew:openLoanNew,
+    loanpay:()=>openLoanPay(id),
+    loandel:()=>askConfirm('এই ঋণের সব তথ্য আর পরিশোধের ইতিহাস মুছে যাবে। চালিয়ে যাবেন?','হ্যাঁ, মুছুন',()=>{kill(id,(S.loans.find(x=>x.id===id)||{}).u);S.loans=S.loans.filter(x=>x.id!==id);save();toast('মুছে ফেলা হয়েছে','🗑');}),
+    goalnew:openGoalNew,
+    goaldep:()=>openGoalMove(id,false),
+    goalwd:()=>openGoalMove(id,true),
+    goaldel:()=>askConfirm('এই সঞ্চয়ের লক্ষ্য আর তার জমার ইতিহাস মুছে যাবে। চালিয়ে যাবেন?','হ্যাঁ, মুছুন',()=>{kill(id,(S.goals.find(x=>x.id===id)||{}).u);S.goals=S.goals.filter(x=>x.id!==id);save();toast('মুছে ফেলা হয়েছে','🗑');}),
+    salrecv:()=>{const s=S.settings;S.tx.push({id:uid(),type:'income',amount:s.salary,cat:'সেলারি',date:today(),note:(s.salarySrc||'মাসিক সেলারি')+' · '+monthName(ym(today()))});save();toast(`${tk(s.salary)} সেলারি লেখা হয়েছে`,'💼');},
+    salsave:()=>{S.settings.salary=parseFloat($('sAmt').value)||0;S.settings.salaryDay=Math.min(31,Math.max(1,parseInt($('sDay').value)||1));S.settings.salarySrc=$('sSrc').value.trim();setTouch();save();toast('সেলারির তথ্য সংরক্ষণ হয়েছে');},
+    budsave:()=>{S.settings.budget=parseFloat($('bud').value)||0;setTouch();save();toast('বাজেট সংরক্ষণ হয়েছে','🎯');},
+    catadd:()=>{const t=a.dataset.t,inp=$(t==='expense'?'ncE':'ncI'),v=inp.value.trim();if(!v)return;if(S.cats[t].includes(v))return toast('এই নামটি আগেই আছে','⚠️');S.cats[t].push(v);setTouch();save();toast('যোগ হয়েছে');},
+    catrm:()=>{const t=a.dataset.t,c=a.dataset.c;if(S.cats[t].length<=1)return;askConfirm(`"${esc(c)}" খাতটি তালিকা থেকে সরিয়ে দেবেন? আগের লেনদেনগুলো আগের মতোই থাকবে।`,'সরান',()=>{S.cats[t]=S.cats[t].filter(x=>x!==c);setTouch();save();});},
+    syncsave:()=>{const u=$('syU').value.trim(),k=$('syK').value.trim();
+      if(u&&!/^https:\/\/script\.google(usercontent)?\.com\//.test(u))return toast('লিংকটি সঠিক নয়। Apps Script-এর Web app URL দিন','⚠️');
+      if(!k)return toast('গোপন কোড লিখুন','⚠️');
+      S.settings.syncUrl=u;S.settings.syncKey=k;S.settings.syncErr='';S.settings.syncDirty=true;persist();render();if(u)syncNow(true);},
+    syncnow:()=>syncNow(true),
+    install:doInstall,
+    phonelink:()=>!appBase()?toast('ফোনের অ্যাপ এখনও অনলাইনে প্রকাশ করা হয়নি','⚠️'):copyText(connectLink(),'লিংক কপি হয়েছে। নিজের WhatsApp/Messenger-এ পাঠিয়ে ফোনে খুলুন'),
+    syncoff:()=>askConfirm('শীটে আর তথ্য পাঠানো হবে না। শীটে আগে থেকে থাকা তথ্য মুছবে না। চালিয়ে যাবেন?','হ্যাঁ, বন্ধ করুন',()=>{S.settings.syncUrl='';persist();render();toast('শীট সংযোগ বন্ধ করা হয়েছে');}),
+    copyscript:()=>copyText(scriptCode(($('syK')&&$('syK').value.trim())||S.settings.syncKey)),
+    export:()=>{S.settings.lastBackup=today();persist();dl(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}),'arif-accounts-backup-'+today()+'.json');toast('ব্যাকআপ ফাইল ডাউনলোড হয়েছে','💾');render();},
+    csv:()=>{const rows=[['তারিখ','ধরন','খাত','পরিমাণ','নোট'],...sortTx(S.tx).map(x=>[x.date,x.type==='income'?'আয়':'খরচ',x.cat,x.amount,x.note||''])];dl(new Blob(['﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}),'arif-accounts-'+today()+'.csv');},
+    demo:()=>S.settings.syncUrl?toast('শীট যুক্ত থাকা অবস্থায় নমুনা ডেটা দেখানো যাবে না','⚠️'):askConfirm('এখনকার সব তথ্য মুছে নমুনা ডেটা বসানো হবে। চালিয়ে যাবেন?','হ্যাঁ, নমুনা দেখান',()=>{const th=S.settings.theme;S=fix({});demo();S.settings.theme=th;S.settings.onboarded=true;save();go('home');toast('নমুনা ডেটা যোগ হয়েছে','🧪');}),
+    clear:()=>askConfirm('<b>সব তথ্য চিরতরে মুছে যাবে!</b>'+(S.settings.syncUrl?' যুক্ত থাকা Google Sheet আর অন্য ডিভাইস থেকেও মুছে যাবে।':'')+' আগে ব্যাকআপ নিয়ে রেখেছেন তো?','হ্যাঁ, সব মুছুন',()=>{const del=allIdsDead(),keep=keepLocal();S=fix({});S.del=del;Object.assign(S.settings,keep);S.settings.onboarded=true;setTouch();save();go('home');toast('সব তথ্য মুছে ফেলা হয়েছে','🗑');}),
+  }[act]||(()=>{}))();
+});
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('ov').classList.contains('show'))closeSheet();
+  if((e.key==='n'||e.key==='N')&&!$('ov').classList.contains('show')&&!['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();openTx();}
+});
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(S.settings.theme==='auto')render();});
+
+function demo(){
+  const t=new Date(),r=(a,b)=>Math.round((a+Math.random()*(b-a))/10)*10;
+  S.settings=Object.assign(S.settings,{salary:45000,salaryDay:1,salarySrc:'অফিস',budget:35000});
+  for(let i=420;i>=0;i--){const d=new Date(t);d.setDate(d.getDate()-i);const s=ds(d),day=d.getDate();
+    if(day===1)S.tx.push({id:uid(),type:'income',amount:45000,cat:'সেলারি',date:s,note:'মাসিক সেলারি'});
+    if(day===3)S.tx.push({id:uid(),type:'expense',amount:12000,cat:'বাসা ভাড়া',date:s,note:''});
+    if(day===10)S.tx.push({id:uid(),type:'expense',amount:r(1500,2500),cat:'বিদ্যুৎ/গ্যাস/পানি',date:s,note:''});
+    if(day===12)S.tx.push({id:uid(),type:'expense',amount:500,cat:'মোবাইল/ইন্টারনেট',date:s,note:'ওয়াইফাই'});
+    if(day===15&&Math.random()<.6)S.tx.push({id:uid(),type:'income',amount:r(5000,15000),cat:'ফ্রিল্যান্স',date:s,note:'প্রজেক্ট'});
+    S.tx.push({id:uid(),type:'expense',amount:r(150,450),cat:'খাবার',date:s,note:''});
+    if(Math.random()<.5)S.tx.push({id:uid(),type:'expense',amount:r(60,250),cat:'যাতায়াত',date:s,note:'রিকশা/বাস'});
+    if(d.getDay()===5)S.tx.push({id:uid(),type:'expense',amount:r(1500,3000),cat:'বাজার',date:s,note:'সাপ্তাহিক বাজার'});
+    if(Math.random()<.06)S.tx.push({id:uid(),type:'expense',amount:r(800,4000),cat:'কেনাকাটা',date:s,note:''});
+    if(Math.random()<.04)S.tx.push({id:uid(),type:'expense',amount:r(300,1500),cat:'বিনোদন',date:s,note:''});
+  }
+  S.loans=[{id:uid(),kind:'taken',person:'ব্যাংক (পার্সোনাল লোন)',amount:100000,date:addDays(today(),-200),due:addDays(today(),165),note:'মাসিক কিস্তি',payments:[{id:uid(),amount:25000,date:addDays(today(),-90)},{id:uid(),amount:10000,date:addDays(today(),-30)}]},
+           {id:uid(),kind:'given',person:'রহিম',amount:5000,date:addDays(today(),-20),due:addDays(today(),5),note:'',payments:[]}];
+  S.goals=[{id:uid(),name:'জরুরি তহবিল',target:150000,deadline:addDays(today(),365),created:today(),deposits:[{id:uid(),amount:30000,date:addDays(today(),-60)},{id:uid(),amount:8000,date:today()}]},
+           {id:uid(),name:'ল্যাপটপ',target:80000,deadline:addDays(today(),150),created:today(),deposits:[{id:uid(),amount:15000,date:addDays(today(),-10)}]}];
+}
+
+/* =================== PWA (ফোনে ইনস্টল) =================== */
+const isHttp=/^https?:/.test(location.protocol);
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+let installEvt=null;
+if(isHttp){
+  for(const [rel,href] of [['manifest','manifest.webmanifest'],['apple-touch-icon','icons/apple-touch-icon.png']]){const l=document.createElement('link');l.rel=rel;l.href=href;document.head.appendChild(l);}
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(page==='home'||page==='set')render();});
+window.addEventListener('appinstalled',()=>{installEvt=null;toast('অ্যাপ ইনস্টল হয়েছে! হোম স্ক্রিনে আইকন দেখুন','📲');render();});
+const canInstall=()=>isHttp&&!standalone()&&(!!installEvt||isIOS);
+function doInstall(){
+  if(installEvt){installEvt.prompt();installEvt.userChoice.then(()=>{installEvt=null;render();});return;}
+  openSheet(`<div class="sh-h"><h3>📲 iPhone-এ ইনস্টল করুন</h3><button class="x" data-act="close">✕</button></div>
+   <ol style="margin:0;padding-left:22px;line-height:2">
+    <li>এই পেজটি <b>Safari</b>-তে খুলুন</li>
+    <li>নিচের <b>Share</b> বাটন (⬆️ চিহ্ন) চাপুন</li>
+    <li><b>Add to Home Screen</b> বাছুন</li>
+    <li>উপরে ডানে <b>Add</b> চাপুন ✅</li></ol>
+   <div class="sh-f"><button class="btn big" data-act="close">ঠিক আছে</button></div>`);
+}
+const installBanner=()=>canInstall()?`<div class="banner" style="background:var(--pri-soft);border-color:color-mix(in srgb,var(--pri) 30%,transparent)"><span class="em">📲</span><div style="flex:1"><b>ফোনে অ্যাপ হিসেবে ইনস্টল করুন</b><div class="small muted">হোম স্ক্রিনে আইকন বসবে, ইন্টারনেট ছাড়াও চলবে</div></div><button class="btn sm" data-act="install">ইনস্টল</button></div>`:'';
+
+/* =================== GOOGLE SHEET SYNC =================== */
+let syncT=null,syncing=false;
+function scheduleSync(ms=2500){if(!S.settings.syncUrl)return;clearTimeout(syncT);syncT=setTimeout(()=>syncNow(false),ms);}
+function syncState(){
+  const s=S.settings;
+  if(!s.syncUrl)return ['','🔒 শুধু এই কম্পিউটারে · শীট যুক্ত নেই'];
+  if(syncing)return ['','🔄 শীটে পাঠানো হচ্ছে…'];
+  if(!navigator.onLine)return ['err',s.syncDirty?'📴 ইন্টারনেট নেই · সংযোগ এলে শীটে যাবে':'📴 ইন্টারনেট নেই'];
+  if(s.syncErr)return ['err','⚠️ শীটে পাঠানো যায়নি: '+s.syncErr];
+  if(s.syncDirty)return ['','⏳ শীটে পাঠানো বাকি'];
+  if(s.lastSync){const d=new Date(s.lastSync);return ['ok',(s.syncBlind?'☁️ শীটে পাঠানো হয়েছে · ':'☁️ শীটে আপডেট হয়েছে · ')+(ds(d)===today()?'আজ ':fmtDate(ds(d))+' ')+d.toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'})];}
+  return ['','⏳ শীটে পাঠানো বাকি'];
+}
+function updSync(){const [c,t]=syncState();for(const id of ['syncSide','syncChip','syncChip2']){const el=$(id);if(el){el.textContent=t;el.classList.remove('ok','err');if(c)el.classList.add(c);}}}
+function sheetPayload(){
+  const s=S.settings,t=today(),m=ym(t),tx=sortTx(S.tx);
+  const months={};for(const x of S.tx){const k=ym(x.date);months[k]=months[k]||[0,0];months[k][x.type==='income'?0:1]+=x.amount;}
+  const mk=Object.keys(months).sort().reverse();
+  const catRows=[];for(const k of mk){for(const [c,v] of byCat('expense',k+'-01',k+'-31'))catRows.push([monthName(k),c,v]);}
+  const srcRows=[];for(const k of mk){for(const [c,v] of byCat('income',k+'-01',k+'-31'))srcRows.push([monthName(k),c,v]);}
+  const debt=S.loans.filter(l=>l.kind==='taken').reduce((a,l)=>a+loanLeft(l),0),recv=S.loans.filter(l=>l.kind==='given').reduce((a,l)=>a+loanLeft(l),0);
+  const now=new Date().toLocaleString('bn-BD');
+  return {key:s.syncKey,backup:JSON.stringify(S),sheets:[
+    {name:'সারাংশ',head:['বিষয়','পরিমাণ / তথ্য'],money:[],rows:[
+      ['শেষ আপডেট',now],['মোট ব্যালেন্স (৳)',balance()],[monthName(m)+' মাসের আয় (৳)',sum('income',m+'-01',t)],[monthName(m)+' মাসের খরচ (৳)',sum('expense',m+'-01',t)],
+      ['বাকি দেনা (৳)',debt],['বাকি পাওনা (৳)',recv],['সঞ্চয়ে জমা (৳)',S.goals.reduce((a,g)=>a+goalSaved(g),0)],['মাসিক সেলারি (৳)',s.salary],['মাসিক বাজেট (৳)',s.budget],['মোট লেনদেন',S.tx.length]]},
+    {name:'লেনদেন',head:['তারিখ','ধরন','খাত','পরিমাণ (৳)','নোট'],money:[4],rows:tx.map(x=>[x.date,x.type==='income'?'আয়':'খরচ',x.cat,x.amount,x.note||''])},
+    {name:'মাসিক হিসাব',head:['মাস','আয় (৳)','খরচ (৳)','উদ্বৃত্ত (৳)','সঞ্চয়ের হার'],money:[2,3,4],rows:mk.map(k=>{const [i,e]=months[k];return [monthName(k),i,e,i-e,i?Math.round((i-e)/i*100)+'%':'—'];})},
+    {name:'খাতভিত্তিক খরচ',head:['মাস','খাত','খরচ (৳)'],money:[3],rows:catRows},
+    {name:'আয়ের উৎস',head:['মাস','উৎস','আয় (৳)'],money:[3],rows:srcRows},
+    {name:'ঋণ',head:['ধরন','নাম','তারিখ','শেষ তারিখ','মোট (৳)','পরিশোধ / ফেরত (৳)','বাকি (৳)','অবস্থা','নোট'],money:[5,6,7],rows:S.loans.map(l=>[l.kind==='taken'?'দেনা (নিয়েছি)':'পাওনা (দিয়েছি)',l.person,l.date,l.due||'',l.amount,loanPaid(l),loanLeft(l),loanLeft(l)<=0?'শেষ':'চলমান',l.note||''])},
+    {name:'সঞ্চয়',head:['লক্ষ্য','লক্ষ্য পরিমাণ (৳)','জমা (৳)','বাকি (৳)','পূরণ','লক্ষ্য তারিখ'],money:[2,3,4],rows:S.goals.map(g=>{const sv=goalSaved(g);return [g.name,g.target,sv,Math.max(0,g.target-sv),Math.round(sv/g.target*100)+'%',g.deadline||''];})}
+  ]};
+}
+async function postSheet(body){
+  const r=await fetch(S.settings.syncUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+  return await r.json();
+}
+const LOCAL_SET=['syncUrl','syncKey','lastSync','syncDirty','syncErr','syncBlind','theme','onboarded','lastBackup'];
+const keepLocal=()=>{const k={};for(const f of LOCAL_SET)k[f]=S.settings[f];return k;};
+const allIdsDead=()=>{const d=Object.assign({},S.del),now=Date.now();for(const x of [...S.tx,...S.loans,...S.goals])d[x.id]=now;return d;};
+function merge(L,R){
+  const del=Object.assign({},R.del||{});for(const [k,v] of Object.entries(L.del||{}))del[k]=Math.max(del[k]||0,v);
+  const mc=(a=[],b=[])=>{const m=new Map();for(const x of [...b,...a]){const o=m.get(x.id);if(!o||(x.u||0)>=(o.u||0))m.set(x.id,x);}return [...m.values()].filter(x=>!(del[x.id]>=(x.u||0)));};
+  const out=Object.assign({},L,{tx:mc(L.tx,R.tx),loans:mc(L.loans,R.loans),goals:mc(L.goals,R.goals),del});
+  if((R.setU||0)>(L.setU||0)){const keep={};for(const f of LOCAL_SET)keep[f]=L.settings[f];out.settings=Object.assign({},L.settings,R.settings,keep);out.cats=R.cats;out.setU=R.setU;}
+  return out;
+}
+const fp=()=>JSON.stringify([S.tx,S.loans,S.goals,S.cats,S.setU]);
+async function syncNow(manual){
+  const s=S.settings;
+  if(!s.syncUrl){if(manual)toast('আগে শীটের লিংক দিন','⚠️');return;}
+  if(!navigator.onLine){updSync();if(manual)toast('ইন্টারনেট নেই। সংযোগ এলে নিজে থেকেই সিঙ্ক হবে','📴');return;}
+  if(syncing){scheduleSync(3000);return;}
+  syncing=true;updSync();let changed=false;
+  try{
+    // ১) শীট থেকে অন্য ডিভাইসের তথ্য আনা ও মেলানো
+    const g=await postSheet(JSON.stringify({key:s.syncKey,action:'get'}));
+    if(!g.ok&&g.error==='bad key')throw new Error('গোপন কোড মেলেনি');
+    if(g.ok&&g.data){const before=fp();const M=merge(S,fix(JSON.parse(g.data),true));S=M;changed=fp()!==before;persist();}
+    // ২) মেলানো তথ্য শীটে পাঠানো
+    const ver=saveVer;
+    const j=await postSheet(JSON.stringify(sheetPayload()));
+    if(!j.ok)throw new Error(j.error==='bad key'?'গোপন কোড মেলেনি':(j.error||'অজানা সমস্যা'));
+    if(ver===saveVer)S.settings.syncDirty=false;S.settings.lastSync=new Date().toISOString();S.settings.syncErr='';S.settings.syncBlind=false;
+  }catch(e){S.settings.syncErr=e instanceof TypeError?'সংযোগ করা যায়নি (লিংক ঠিক আছে কিনা দেখুন)':e.message;}
+  syncing=false;persist();
+  if(changed&&!$('ov').classList.contains('show'))render();else updSync();
+  const se=S.settings.syncErr;
+  if(manual)toast(se?'সিঙ্ক হয়নি: '+se:(changed?'অন্য ডিভাইসের তথ্য মেলানো হয়েছে, শীটও আপডেট হয়েছে':'Google Sheet-এ আপডেট হয়েছে'),se?'⚠️':'☁️');
+  if(S.settings.syncDirty&&!se)scheduleSync(2000);
+}
+function appBase(){return /^https?:/.test(location.protocol)?location.origin+location.pathname.replace(/index\.html$/,''):APP_URL;}
+function connectLink(){const p={u:S.settings.syncUrl,k:S.settings.syncKey};return appBase()+'#connect='+btoa(unescape(encodeURIComponent(JSON.stringify(p))));}
+function handleConnectHash(){
+  const m=location.hash.match(/#connect=([A-Za-z0-9+/=]+)/);if(!m)return false;
+  history.replaceState(null,'',location.pathname);
+  try{const p=JSON.parse(decodeURIComponent(escape(atob(m[1]))));if(!p.u||!p.k)throw 0;
+    openSheet(`<div class="sh-h"><h3>📗 Google Sheet যুক্ত করুন</h3><button class="x" data-act="close">✕</button></div>
+     <p style="margin:0">এই ডিভাইসটি আপনার Google Sheet-এর সাথে যুক্ত হবে। তখন কম্পিউটার আর ফোনের হিসাব একই থাকবে।</p>
+     <div class="sh-f"><button class="btn ghost big" data-act="close">পরে</button><button class="btn big" id="cnOk">✓ যুক্ত করুন</button></div>`,sh=>{
+      sh.querySelector('#cnOk').onclick=()=>{S.settings.syncUrl=p.u;S.settings.syncKey=p.k;S.settings.syncErr='';S.settings.onboarded=true;persist();closeSheet();render();syncNow(true);};});
+    return true;
+  }catch(e){toast('লিংকটি সঠিক নয়','⚠️');return false;}
+}
+function copyText(t,msg){
+  const done=()=>toast(msg||'স্ক্রিপ্ট কপি হয়েছে। এবার Apps Script-এ পেস্ট করুন','📋');
+  const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){toast('কপি করা যায়নি','⚠️');}ta.remove();};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb();
+}
+function scriptCode(key){return [
+"// আরিফের একাউন্টস — Google Sheet সংযোগ স্ক্রিপ্ট",
+"// এই শীটের Extensions → Apps Script-এ পেস্ট করে Web app হিসেবে Deploy করুন।",
+"var SECRET = '"+String(key).replace(/[^\w-]/g,'')+"';",
+"",
+"function doPost(e) {",
+"  var d = JSON.parse(e.postData.contents);",
+"  if (d.key !== SECRET) return out_({ok: false, error: 'bad key'});",
+"  var ss = SpreadsheetApp.getActiveSpreadsheet();",
+"  if (d.action === 'get') {",
+"    var b = ss.getSheetByName('_backup');",
+"    if (!b || b.getLastRow() < 1) return out_({ok: false, error: 'no backup'});",
+"    var v = b.getRange(1, 1, b.getLastRow(), 1).getValues().map(function (r) { return r[0]; }).join('');",
+"    return out_({ok: true, data: v});",
+"  }",
+"  var lock = LockService.getScriptLock();",
+"  lock.waitLock(25000);",
+"  try {",
+"    d.sheets.forEach(function (s) { write_(ss, s); });",
+"    if (d.backup) {",
+"      var bk = ss.getSheetByName('_backup') || ss.insertSheet('_backup');",
+"      bk.clear();",
+"      var parts = [];",
+"      for (var i = 0; i < d.backup.length; i += 40000) parts.push([d.backup.substr(i, 40000)]);",
+"      bk.getRange(1, 1, parts.length, 1).setNumberFormat('@').setValues(parts);",
+"      bk.hideSheet();",
+"    }",
+"  } finally {",
+"    lock.releaseLock();",
+"  }",
+"  return out_({ok: true, time: new Date().toISOString()});",
+"}",
+"",
+"function write_(ss, s) {",
+"  var sh = ss.getSheetByName(s.name) || ss.insertSheet(s.name);",
+"  sh.clear();",
+"  var n = s.head.length;",
+"  sh.getRange(1, 1, 1, n).setValues([s.head]).setFontWeight('bold').setBackground('#0f766e').setFontColor('#ffffff');",
+"  if (s.rows.length) {",
+"    sh.getRange(2, 1, s.rows.length, n).setValues(s.rows);",
+"    (s.money || []).forEach(function (c) { sh.getRange(2, c, s.rows.length, 1).setNumberFormat('#,##0'); });",
+"  }",
+"  sh.setFrozenRows(1);",
+"  try { sh.autoResizeColumns(1, n); } catch (err) {}",
+"}",
+"",
+"function doGet() { return out_({ok: true, app: 'Arif Accounts'}); }",
+"",
+"function out_(o) {",
+"  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);",
+"}"].join('\n');}
+window.addEventListener('online',()=>{updSync();scheduleSync(800);});
+window.addEventListener('offline',updSync);
+setInterval(()=>{if(S.settings.syncUrl&&S.settings.syncDirty&&navigator.onLine&&!syncing)syncNow(false);},60000);
+
+/* =================== START =================== */
+const _render=render;render=function(){_render();updSync();};
+render();
+const _cn=handleConnectHash();
+if(S.settings.syncUrl)scheduleSync(S.settings.syncDirty?1500:4000);
+if(!S.settings.onboarded&&!_cn)onboarding();
+</script>
+</body>
+</html>
