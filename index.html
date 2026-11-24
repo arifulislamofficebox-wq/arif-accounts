@@ -1023,15 +1023,17 @@ function copyText(t,msg){
   const fb=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){toast('কপি করা যায়নি','⚠️');}ta.remove();};
   if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb();
 }
-function scriptCode(key){return [
+function scriptCode(key,sheetId){return [
 "// আরিফের একাউন্টস — Google Sheet সংযোগ স্ক্রিপ্ট",
 "// এই শীটের Extensions → Apps Script-এ পেস্ট করে Web app হিসেবে Deploy করুন।",
 "var SECRET = '"+String(key).replace(/[^\w-]/g,'')+"';",
+"// শীটের লিংকের /d/ আর /edit এর মাঝের অংশটি এখানে দিন (খালি থাকলে যে শীট থেকে স্ক্রিপ্ট খোলা হয়েছে সেটি)",
+"var SHEET_ID = '"+String(sheetId||'').replace(/[^\w-]/g,'')+"';",
 "",
 "function doPost(e) {",
 "  var d = JSON.parse(e.postData.contents);",
 "  if (d.key !== SECRET) return out_({ok: false, error: 'bad key'});",
-"  var ss = SpreadsheetApp.getActiveSpreadsheet();",
+"  var ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();",
 "  if (d.action === 'get') {",
 "    var b = ss.getSheetByName('_backup');",
 "    if (!b || b.getLastRow() < 1) return out_({ok: false, error: 'no backup'});",
@@ -1050,6 +1052,8 @@ function scriptCode(key){return [
 "      bk.getRange(1, 1, parts.length, 1).setNumberFormat('@').setValues(parts);",
 "      bk.hideSheet();",
 "    }",
+"    var s1 = ss.getSheetByName('Sheet1');",
+"    if (s1 && s1.getLastRow() === 0 && ss.getSheets().length > 2) ss.deleteSheet(s1);",
 "  } finally {",
 "    lock.releaseLock();",
 "  }",
@@ -1060,6 +1064,8 @@ function scriptCode(key){return [
 "  var sh = ss.getSheetByName(s.name) || ss.insertSheet(s.name);",
 "  sh.clear();",
 "  var n = s.head.length;",
+"  var need = s.rows.length + 1;",
+"  if (sh.getMaxRows() < need) sh.insertRowsAfter(sh.getMaxRows(), need - sh.getMaxRows());",
 "  sh.getRange(1, 1, 1, n).setValues([s.head]).setFontWeight('bold').setBackground('#0f766e').setFontColor('#ffffff');",
 "  if (s.rows.length) {",
 "    sh.getRange(2, 1, s.rows.length, n).setValues(s.rows);",
