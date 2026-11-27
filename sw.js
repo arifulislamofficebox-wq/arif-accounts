@@ -1,5 +1,5 @@
 // আরিফের একাউন্টস — অফলাইন ক্যাশ (service worker)
-const VERSION = 'arif-1795594192383';
+const VERSION = 'arif-1795798179849';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

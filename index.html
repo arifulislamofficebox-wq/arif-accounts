@@ -216,6 +216,8 @@ label.lb{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-
 .seg2 button{border:0;background:none;padding:10px;border-radius:11px;font-weight:600;color:var(--muted);font-size:15px}
 .seg2 button.on[data-v="expense"],.seg2 button.on[data-v="taken"]{background:var(--exp);color:#fff}
 .seg2 button.on[data-v="income"],.seg2 button.on[data-v="given"]{background:var(--inc);color:#fff}
+.seg2 button.on[data-v="settle"]{background:var(--blue);color:#fff}
+.hist .x2{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 0 0 6px;font-size:12px}
 .amtbox{display:flex;align-items:center;justify-content:center;gap:4px;margin:18px 0 4px;padding:6px 0 10px;border-bottom:2px solid var(--line)}
 .amtbox:focus-within{border-color:var(--pri)}
 .amtbox span{font-size:30px;color:var(--muted);font-weight:600}
@@ -433,6 +435,23 @@ function learnCat(type,text,cat){
   if(!text)return;S.learn=S.learn||{expense:{},income:{}};S.learn[type]=S.learn[type]||{};
   for(const w of toks(text))if(!/^\d+$/.test(w))S.learn[type][w]=cat;
 }
+/* লেখা দেখে বোঝা: বাকি/ঋণ শোধ করছি, নাকি পাওনা টাকা ফেরত পাচ্ছি, আর কোন খাতার */
+function detectSettle(text){
+  const t=nrm(toLatin(text));if(!t.trim())return null;
+  const accs=S.loans.filter(l=>loanLeft(l)>0);
+  const recv=/ফেরত পেলাম|ফেরত পেয়েছি|ফেরত দিল|ফেরত দিয়েছে|টাকা দিল|টাকা দিয়েছে|পাওনা পেলাম|পাওনা টাকা|returned/.test(t);
+  const pay=/পরিশোধ|শোধ|কিস্তি|(^|[^a-z])emi([^a-z]|$)|বাকি দিলাম|বাকির টাকা দিলাম|বাকির বিল|বাকি বিল|ধার ফেরত দিলাম|ঋণ ফেরত দিলাম|কার্ডের বিল|কার্ড বিল|card bill|repay|loan payment|installment/.test(t);
+  const named=accs.filter(l=>toks(l.person).some(w=>w.length>=3&&t.includes(w)));
+  if(!recv&&!pay){if(!named.length||!/দিলাম|দিয়েছি|বিল দিলাম|দিল|দিয়েছে/.test(t)||/বাকিতে|কিনলাম/.test(t))return null;}
+  let dir=recv?'recv':pay?'pay':(named[0].kind==='given'?'recv':'pay');
+  if(!recv&&!pay&&named[0].kind==='given'&&/দিলাম|দিয়েছি/.test(t))return null; // পাওনাদারকে আবার দিলাম = নতুন ধার, শোধ নয়
+  const pool=accs.filter(l=>dir==='recv'?l.kind==='given':l.kind!=='given');
+  let pick=named.find(l=>pool.includes(l));
+  if(!pick){const want=/কার্ড|card/.test(t)?'card':/ফার্মেসী|ফার্মেসি|ওষুধ|pharmacy/.test(t)?'pharmacy':/দোকান|মুদি|স্টোর|shop|store/.test(t)?'shop':/ঋণ|লোন|কিস্তি|ব্যাংক|loan|emi/.test(t)?'taken':null;
+    if(want)pick=pool.find(l=>want==='taken'?l.kind==='taken':l.ctype===want);}
+  if(!pick&&pool.length===1)pick=pool[0];
+  return {dir,id:pick?pick.id:''};
+}
 /* লেখার শেষের টাকার অঙ্ক বের করা: "রিকশা ভাড়া ৫০" → 50 */
 function parseAmt(text){const s=toLatin(text).replace(/(\d),(\d{3})/g,'$1$2');const m=[...s.matchAll(/\d+(?:\.\d+)?/g)];return m.length?parseFloat(m[m.length-1][0]):0;}
 function stripAmt(text){const s=String(text||'');return s.replace(/[\d০-৯]+(?:[.,][\d০-৯]+)*\s*(৳|টাকা|tk|taka)?\s*$/i,'').replace(/^\s*(৳|টাকা)\s*/,'').trim();}
@@ -602,7 +621,7 @@ V.home=()=>{
   <div class="qa">
     <button data-act="addtx" data-type="expense"><div class="qi" style="background:var(--exp-soft)">💸</div>খরচ লিখুন</button>
     <button data-act="addtx" data-type="income"><div class="qi" style="background:var(--inc-soft)">💰</div>আয় লিখুন</button>
-    <button data-go="save"><div class="qi" style="background:var(--gold-soft)">🐷</div>সঞ্চয়</button>
+    <button data-act="addtx" data-type="settle"><div class="qi" style="background:var(--blue-soft)">🔁</div>শোধ / ফেরত</button>
     <button data-go="loan"><div class="qi" style="background:var(--blue-soft)">🧾</div>দেনা ও বাকি</button>
   </div>
   ${installBanner()}
@@ -692,7 +711,7 @@ V.loan=()=>{
   const card=l=>{
     const cr=isCredit(l),paid=loanPaid(l),tot=loanTotal(l),left=loanLeft(l),p=tot?Math.min(1,paid/tot):0,done=left<=0&&tot>0,late=l.due&&left>0&&l.due<t;
     const buys=cr?creditTx(l):[],mBuy=buys.filter(x=>ym(x.date)===m).reduce((a,x)=>a+x.amount,0);
-    const hist=[...l.payments.map(x=>({d:x.date,h:`<span class="inc">${l.kind==='given'?'ফেরত পেলাম':'শোধ করলাম'} ${tk(x.amount)}</span>`})),...buys.map(x=>({d:x.date,h:`<span class="exp">বাকিতে কেনা: ${esc(x.note||x.cat)} ${tk(x.amount)}</span>`}))].sort((a,b)=>b.d.localeCompare(a.d));
+    const hist=[...l.payments.map(x=>({d:x.date,h:`<span class="inc">${l.kind==='given'?'ফেরত পেলাম':'শোধ করলাম'} ${tk(x.amount)}${x.note?' · '+esc(x.note):''}<button class="x2" title="ভুল হলে মুছুন" data-act="paydel" data-id="${l.id}|${x.id}">✕</button></span>`})),...buys.map(x=>({d:x.date,h:`<span class="exp">বাকিতে কেনা: ${esc(x.note||x.cat)} ${tk(x.amount)}</span>`}))].sort((a,b)=>b.d.localeCompare(a.d));
     const lab=l.kind==='taken'?['মোট ঋণ','শোধ করেছি','বাকি']:l.kind==='given'?['ধার দিয়েছি','ফেরত পেয়েছি','বাকি']:['মোট বাকি হয়েছে','শোধ করেছি','এখন বাকি'];
     const bg=l.kind==='given'?'var(--blue-soft)':cr?'var(--gold-soft)':'var(--exp-soft)';
     return `<div class="item"><div class="top"><div class="avatar" style="background:${bg}">${loanIcon(l)}</div><div style="flex:1"><h4>${esc(l.person)}</h4><div class="meta">${loanType(l)}${cr?'':' · '+fmtDate(l.date)}${l.due?' · শেষ তারিখ '+fmtDate(l.due):''}${l.billDay?' · বিলের তারিখ '+bn(l.billDay):''}${l.note?' · '+esc(l.note):''}</div></div>${done?'<span class="chip good">✓ শোধ</span>':late?'<span class="chip bad">তারিখ পার</span>':''}</div>
@@ -835,10 +854,11 @@ function openTx(o={}){
   let items=ed&&ed.items?ed.items.slice():[],itemMode=!!(ed&&ed.items&&ed.items.length);
   let pay=ed?(ed.credit||''):(o.credit||''),payManual=!!(ed||o.credit);
   let amtManual=!!ed,newAcc=false,newAccType='shop';
+  let settleId=o.settle||'',settleManual=!!o.settle,settleDir=o.dir||'pay';
   if(!ed&&o.credit){const L=S.loans.find(l=>l.id===o.credit);if(L&&CT[L.ctype||'other'][2])cat=CT[L.ctype][2];}
   const credits=()=>S.loans.filter(isCredit);
   openSheet(`<div class="sh-h"><h3>${ed?'লেনদেন বদলান':'নতুন লেনদেন'}</h3><button class="x" data-act="close">✕</button></div>
-   <div class="seg2" id="ttype"><button data-v="expense">💸 খরচ</button><button data-v="income">💰 আয়</button></div>
+   <div class="seg2" id="ttype" style="grid-template-columns:${ed?'1fr 1fr':'repeat(3,1fr)'}"><button data-v="expense">💸 খরচ</button><button data-v="income">💰 আয়</button>${ed?'':'<button data-v="settle">🔁 শোধ / ফেরত</button>'}</div>
    <div class="lbl2" id="tdl"></div>
    <input id="tdesc" value="${esc(ed?ed.note:'')}" autocomplete="off" autofocus>
    <div class="detect" id="tdet"></div>
@@ -850,6 +870,13 @@ function openTx(o={}){
      <div class="ilist" id="tilist"></div>
    </div>
    <div style="margin-top:8px"><button class="link" id="titog"></button></div>
+   <div id="tset" style="display:none">
+     <div class="lbl2">কোন হিসাবের টাকা? <span class="muted">লিখলে নিজে থেকে বেছে নেব</span></div>
+     <div id="tsetch"></div>
+     <div class="ins" id="tsethint" style="margin:10px 0 0"></div>
+     <div id="tsetint" style="margin-top:10px"><label class="lb">এর মধ্যে সুদ বা চার্জ কত? (ঐচ্ছিক)</label><input id="tsi" type="number" inputmode="decimal" placeholder="৳ ০"></div>
+     <div style="margin-top:8px"><button class="link" data-act="loannew">＋ নতুন ঋণ, বাকির খাতা বা পাওনা যোগ করুন</button></div>
+   </div>
    <div class="amtbox"><span>৳</span><input id="tamt" type="number" inputmode="decimal" placeholder="০" value="${ed?ed.amount:''}"></div>
    <div class="qamt" id="tq">${[50,100,200,500,1000,5000].map(v=>`<button data-q="${v}">+${bn(v)}</button>`).join('')}</div>
    <div id="tpay"><div class="lbl2">টাকা কীভাবে দিলেন?</div><div class="chips" id="tpaych"></div><div class="small muted" id="tpayhint" style="margin-top:6px"></div>
@@ -872,6 +899,28 @@ function openTx(o={}){
     };
     const draw=()=>{
       sh.querySelectorAll('#ttype button').forEach(b=>b.classList.toggle('on',b.dataset.v===type));
+      const st=type==='settle';
+      for(const s of ['#tdet','#tpay'])q(s).style.display=st?'none':'';
+      q('#tset').style.display=st?'':'none';
+      if(st){
+        q('#tgrid').style.display=q('#titems').style.display=q('#titog').style.display='none';amt.readOnly=false;
+        q('#tdl').innerHTML='কার বাকি বা ঋণ শোধ করলেন, অথবা কে টাকা ফেরত দিল?';
+        desc.placeholder='যেমন: মামা স্টোরের বাকি শোধ ১৫০০ · কার্ডের বিল দিলাম ৫০০০ · রহিম টাকা ফেরত দিল ২০০০';
+        const open=S.loans.filter(l=>loanLeft(l)>0),debts=open.filter(l=>l.kind!=='given'),recvs=open.filter(l=>l.kind==='given');
+        const L=S.loans.find(l=>l.id===settleId);if(L)settleDir=L.kind==='given'?'recv':'pay';
+        const chipsOf=(arr,lab)=>arr.length?`<div class="small muted" style="margin:6px 0 4px">${lab}</div><div class="chips">${arr.map(l=>`<button data-s="${l.id}" class="${settleId===l.id?'on':''}">${loanIcon(l)} ${esc(l.person)} · বাকি ${tk(loanLeft(l))}</button>`).join('')}</div>`:'';
+        q('#tsetch').innerHTML=open.length?chipsOf(debts,'💳 যা আমি শোধ করব (দায়)')+chipsOf(recvs,'💰 যা আমি ফেরত পাব (পাওনা)'):'<div class="empty" style="padding:14px">এখনও কোনো ঋণ, বাকি বা পাওনা যোগ করা নেই</div>';
+        q('#tsethint').innerHTML=!L?'<span class="e">👆</span><div>উপরের তালিকা থেকে হিসাবটা বেছে নিন।</div>'
+          :settleDir==='recv'?`<span class="e">💡</span><div><b>${esc(L.person)}</b> টাকা ফেরত দিচ্ছে। এটা আয় নয়: হাতের টাকা বাড়বে আর পাওনা কমবে।</div>`
+          :`<span class="e">💡</span><div><b>${esc(L.person)}</b> (${loanType(L)}) এর ${tk(loanLeft(L))} বাকি থেকে শোধ হবে। এটা নতুন খরচ নয়: হাতের টাকা কমবে আর দায় কমবে।</div>`;
+        q('#tsetint').style.display=L&&settleDir==='pay'?'':'none';
+        q('#tq').style.display='';
+        q('#tq').innerHTML=L?`<button data-full="${loanLeft(L)}">পুরো বাকি (${tk(loanLeft(L))})</button>${loanLeft(L)>=2?`<button data-full="${Math.round(loanLeft(L)/2)}">অর্ধেক</button>`:''}`:'';
+        const t=today();sh.querySelectorAll('#tdate button').forEach(b=>b.classList.toggle('on',addDays(t,+b.dataset.d)===date));q('#tdin').value=date;
+        q('#tsave').style.background='var(--blue)';
+        return;
+      }
+      if(!q('#tq').querySelector('[data-q]'))q('#tq').innerHTML=[50,100,200,500,1000,5000].map(v=>`<button data-q="${v}">+${bn(v)}</button>`).join('');
       q('#tdl').innerHTML=type==='expense'?'কী খরচ করলেন? <span class="muted">লিখলেই খাত নিজে থেকে বুঝে নেব</span>':'কোথা থেকে টাকা এলো? <span class="muted">লিখলেই উৎস নিজে থেকে বুঝে নেব</span>';
       desc.placeholder=type==='expense'?'যেমন: রিকশা ভাড়া ৫০ · নাপা ২০ · দুপুরের খাবার ১২০':'যেমন: অফিসের বেতন ৪৫০০০ · ফ্রিল্যান্স প্রজেক্ট ১২০০০';
       if(!catManual){const g=guess();cat=g||(o.credit&&cat)||null;}
@@ -900,6 +949,10 @@ function openTx(o={}){
     };
     desc.addEventListener('input',()=>{
       const t=desc.value;
+      const sd=!ed&&(!typeManual||type==='settle')?detectSettle(t):null;
+      if(sd){type='settle';settleDir=sd.dir;if(!settleManual&&sd.id)settleId=sd.id;}
+      else if(type==='settle'&&!typeManual)type='expense';
+      if(type==='settle'){if(!amtManual){const a=parseAmt(t);amt.value=a||'';}draw();return;}
       if(!typeManual&&!ed){const inc=detectCat('income',t),ex=detectCat('expense',t);if(inc&&!ex&&type!=='income'){type='income';}else if(ex&&!inc&&type!=='expense'){type='expense';}}
       if(!amtManual&&!(type==='expense'&&(itemMode||cat==='বাজার')&&items.length)){const a=parseAmt(t);amt.value=a||'';}
       if(!catManual){const g=guess();cat=g||null;}
@@ -912,7 +965,8 @@ function openTx(o={}){
     q('#tcats').onclick=e=>{const b=e.target.closest('.cbtn');if(b){cat=b.dataset.c;catManual=true;showGrid=false;draw();}};
     q('#tnewcatb').onclick=()=>{const v=q('#tnewcat').value.trim();if(!v)return;cat=v;catManual=true;showGrid=false;q('#tnewcat').value='';draw();};
     q('#titog').onclick=()=>{itemMode=true;draw();itx.focus();};
-    q('#tq').onclick=e=>{const b=e.target.closest('button');if(b){amt.value=(parseFloat(amt.value)||0)+ +b.dataset.q;amtManual=true;}};
+    q('#tq').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.full){amt.value=b.dataset.full;amtManual=true;return;}amt.value=(parseFloat(amt.value)||0)+ +b.dataset.q;amtManual=true;};
+    q('#tsetch').onclick=e=>{const b=e.target.closest('button[data-s]');if(b){settleId=b.dataset.s;settleManual=true;draw();}};
     q('#tpaych').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p==='new'){newAcc=!newAcc;draw();if(newAcc)q('#tnan').focus();return;}pay=b.dataset.p;payManual=true;newAcc=false;draw();};
     q('#tnat').onclick=e=>{const b=e.target.closest('button');if(b){newAccType=b.dataset.k;draw();}};
     q('#tnab').onclick=()=>{const n=q('#tnan').value.trim();if(!n){shake(q('#tnan'));return toast('খাতার নাম লিখুন','✍️');}
@@ -921,6 +975,20 @@ function openTx(o={}){
     q('#tdate').onclick=e=>{const b=e.target.closest('button');if(b){date=addDays(today(),+b.dataset.d);draw();}};
     q('#tdin').onchange=e=>{date=e.target.value||today();draw();};
     const doSave=()=>{
+      if(type==='settle'){
+        const L=S.loans.find(l=>l.id===settleId);
+        if(!L){shake(q('#tsetch'));return toast('কোন হিসাবের টাকা, সেটা বাছুন','👆');}
+        const a=parseFloat(amt.value);if(!(a>0)){shake(q('.amtbox'));amt.focus();return toast('টাকার পরিমাণ লিখুন','✍️');}
+        const left=loanLeft(L),gv=L.kind==='given';
+        const intr=gv?0:Math.min(a,parseFloat(toLatin(q('#tsi').value))||0);
+        const princ=Math.min(a-intr,left);
+        if(a-intr>left+0.5)toast(`বাকি ছিল ${tk(left)}, তাই ${tk(left)} ধরা হলো`,'ℹ️');
+        if(princ>0){L.payments.push({id:uid(),amount:princ,date,note:stripAmt(desc.value.trim())});touch(L);}
+        if(intr>0){if(!S.cats.expense.includes('সুদ ও চার্জ'))S.cats.expense.push('সুদ ও চার্জ');S.tx.push({id:uid(),type:'expense',amount:intr,cat:'সুদ ও চার্জ',date,note:'সুদ/চার্জ: '+L.person});}
+        closeSheet();save();
+        setTimeout(()=>toast(loanLeft(L)<=0?`🎉 ${esc(L.person)}: পুরোপুরি শোধ!`:gv?`${tk(princ)} ফেরত পেলাম · ${esc(L.person)}`:`${tk(princ)} শোধ হলো · ${esc(L.person)} (বাকি ${tk(loanLeft(L))})`,'🔁'),a-intr>left+0.5?1800:0);
+        return;
+      }
       const useItems=type==='expense'&&items.length&&(itemMode||cat==='বাজার');
       const a=useItems?itemSum():parseFloat(amt.value);
       if(!(a>0)){shake(q('.amtbox'));(useItems?itx:amt).focus();toast('টাকার পরিমাণ লিখুন','✍️');return;}
@@ -1078,7 +1146,9 @@ document.addEventListener('click',e=>{
     txt:()=>{txType=a.dataset.v;render();},
     rm:()=>{repM=shiftMonth(repM,+a.dataset.d);render();},
     loannew:openLoanNew,
-    loanpay:()=>openLoanPay(id),
+    loanpay:()=>openTx({type:'settle',settle:id}),
+    paydel:()=>{const [lid,pid]=id.split('|'),L=S.loans.find(x=>x.id===lid),P=L&&L.payments.find(p=>p.id===pid);if(!P)return;
+      askConfirm(`${esc(L.person)} এর ${fmtDate(P.date)} তারিখের ${tk(P.amount)} ${L.kind==='given'?'ফেরত পাওয়ার':'শোধের'} হিসাবটা মুছে ফেলবেন? বাকি আবার ${tk(P.amount)} বেড়ে যাবে।`,'হ্যাঁ, মুছুন',()=>{L.payments=L.payments.filter(p=>p.id!==pid);touch(L);save();toast('মুছে ফেলা হয়েছে','🗑');});},
     creditbuy:()=>openTx({type:'expense',credit:id}),
     loandel:()=>{const L=S.loans.find(x=>x.id===id);if(L&&isCredit(L)&&loanLeft(L)>0)return toast('এই খাতায় এখনও বাকি আছে। আগে শোধ করুন, তারপর মুছুন','⚠️');askConfirm('এর সব তথ্য আর শোধের ইতিহাস মুছে যাবে। চালিয়ে যাবেন?','হ্যাঁ, মুছুন',()=>{kill(id,(S.loans.find(x=>x.id===id)||{}).u);S.loans=S.loans.filter(x=>x.id!==id);save();toast('মুছে ফেলা হয়েছে','🗑');});},
     goalnew:openGoalNew,
